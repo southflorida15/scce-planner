@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { SESSIONS, TRACKS, DAY_ORDER, DAY_LABELS } from "../data/sessions";
-import SessionBlock from "./SessionBlock";
+import { SESSIONS, TRACKS, DAY_ORDER, DAY_LABELS, SPEAKERS } from "../data/sessions";
 import BioModal from "./BioModal";
 
 function getOrCreateUID() {
@@ -9,28 +8,163 @@ function getOrCreateUID() {
   return uid;
 }
 
-function slotKey(s) { return `${s.day}|${s.time}`; }
-
-const DAYS = ["All Days", "Sunday", "Monday", "Tuesday", "Wednesday"];
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday"];
 const DAY_SUBTITLES = {
-  "All Days":  "Full conference · Sept 27–30",
-  "Sunday":    "September 27 · Pre-Conference",
-  "Monday":    "September 28",
-  "Tuesday":   "September 29",
-  "Wednesday": "September 30 · Workshops",
+  Sunday:    "Sept 27 · Pre-Conference",
+  Monday:    "Sept 28",
+  Tuesday:   "Sept 29",
+  Wednesday: "Sept 30 · Workshops",
 };
 
+// Build slot map: { "Sunday|8:30 AM – 10:00 AM": [session, session, ...] }
+function buildSlotMap() {
+  const map = {};
+  SESSIONS.forEach(s => {
+    const k = `${s.day}|${s.time}`;
+    if (!map[k]) map[k] = { day: s.day, time: s.time, sessions: [] };
+    map[k].sessions.push(s);
+  });
+  return map;
+}
+const SLOT_MAP = buildSlotMap();
+
+// Ordered list of slots per day
+function getSlotsForDay(day) {
+  return Object.values(SLOT_MAP)
+    .filter(sl => sl.day === day)
+    .sort((a, b) => a.time.localeCompare(b.time));
+}
+
+const LinkedInIcon = () => (
+  <svg viewBox="0 0 16 16" width="10" height="10" fill="currentColor">
+    <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/>
+  </svg>
+);
+
+function SessionOption({ session, onSelect, onBioClick }) {
+  const { id, track, title, sp, live } = session;
+  return (
+    <div style={s.option}>
+      <div style={s.optionHeader}>
+        <div style={s.metaRow}>
+          <span style={s.sid}>{id}</span>
+          <span style={s.trackTag}>{track}</span>
+          {live && <span style={s.liveTag}>📡 Live</span>}
+        </div>
+        <button style={s.selectBtn} onClick={() => onSelect(id)}>Select →</button>
+      </div>
+      <div style={s.optionTitle}>{title}</div>
+      {sp.length > 0 && (
+        <div style={s.spChips}>
+          {sp.map(name => {
+            const d = SPEAKERS[name] ?? {};
+            return (
+              <div key={name} style={s.spChip}>
+                <button style={s.spChipName} onClick={() => onBioClick(name)}>{name}</button>
+                <span style={{ fontSize: "10px", color: d.v ? "#64748b" : "#b45309" }}>
+                  {d.co || "TBD"}{!d.v && " ⚠"}
+                </span>
+                {d.li && (
+                  <a href={d.li} target="_blank" rel="noopener noreferrer" style={s.liBtn} title="LinkedIn">
+                    <span style={s.liIcon}><LinkedInIcon /></span>
+                  </a>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick }) {
+  const [open, setOpen] = useState(false);
+  const selectedSession = selectedId ? slot.sessions.find(s => s.id === selectedId) : null;
+  const isFilled = !!selectedSession;
+  const hasSessions = slot.sessions.length > 0;
+  const hasOptions = slot.sessions.some(s => s.sp.length > 0); // skip TBD-only slots
+
+  return (
+    <div style={{ marginBottom: "8px" }}>
+      {/* ── SLOT CARD ── */}
+      <div style={{
+        ...s.slotCard,
+        borderLeft: isFilled ? "4px solid #2563eb" : "4px solid #e2e8f0",
+        background: isFilled ? "#f0f7ff" : open ? "#fafafa" : "#fff",
+      }}>
+        {/* Time label */}
+        <div style={s.slotTime}>{slot.time}</div>
+
+        {isFilled ? (
+          /* FILLED STATE */
+          <div style={s.filledBody}>
+            <div style={s.filledLeft}>
+              <div style={s.filledMeta}>
+                <span style={s.sid}>{selectedSession.id}</span>
+                <span style={s.trackTag}>{selectedSession.track}</span>
+                {selectedSession.live && <span style={s.liveTag}>📡 Live</span>}
+              </div>
+              <div style={s.filledTitle}>{selectedSession.title}</div>
+              <div style={s.filledSpeakers}>
+                {selectedSession.sp.map(name => (
+                  <button key={name} style={s.filledSpName} onClick={() => onBioClick(name)}>{name}</button>
+                ))}
+              </div>
+            </div>
+            <div style={s.filledActions}>
+              <button style={s.swapBtn} onClick={() => { onDeselect(selectedId); setOpen(true); }}>
+                ⇄ Swap
+              </button>
+              <button style={s.removeBtn} onClick={() => { onDeselect(selectedId); setOpen(false); }}>
+                ✕
+              </button>
+            </div>
+          </div>
+        ) : hasOptions ? (
+          /* OPEN STATE */
+          <div style={s.openBody} onClick={() => setOpen(v => !v)}>
+            <div style={s.openLabel}>
+              <span style={s.openDot} />
+              Open slot
+              <span style={s.openCount}>{slot.sessions.filter(s => s.sp.length > 0).length} sessions available</span>
+            </div>
+            <span style={{ fontSize: "18px", color: "#94a3b8", marginLeft: "auto" }}>{open ? "▲" : "▼"}</span>
+          </div>
+        ) : (
+          /* TBD — no sessions yet */
+          <div style={s.tbdBody}>
+            <span style={s.openDot} />
+            <span style={{ fontSize: "12px", color: "#94a3b8", fontStyle: "italic" }}>Sessions TBD</span>
+          </div>
+        )}
+      </div>
+
+      {/* ── EXPANDED OPTIONS ── */}
+      {open && !isFilled && (
+        <div style={s.optionsPanel}>
+          {slot.sessions
+            .filter(s => s.sp.length > 0)
+            .map(session => (
+              <SessionOption
+                key={session.id}
+                session={session}
+                onSelect={(id) => { onSelect(id); setOpen(false); }}
+                onBioClick={onBioClick}
+              />
+            ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function PlannerTab() {
-  const [selectedIds, setSelectedIds] = useState(new Set());
-  const [bioName, setBioName]         = useState(null);
-  const [syncMsg, setSyncMsg]         = useState("");
-  const [syncType, setSyncType]       = useState("");
-  const [activeDay, setActiveDay]     = useState("All Days");
-  const [filterName, setFilterName]   = useState("");
-  const [filterCo, setFilterCo]       = useState("");
-  const [filterTrack, setFilterTrack] = useState("ALL");
-  const [filterLive, setFilterLive]   = useState("ALL");
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [selectedIds, setSelectedIds]   = useState(new Set());
+  const [bioName, setBioName]           = useState(null);
+  const [syncMsg, setSyncMsg]           = useState("");
+  const [syncType, setSyncType]         = useState("");
+  const [activeDay, setActiveDay]       = useState("Sunday");
   const saveTimer = useRef(null);
   const UID = useRef(getOrCreateUID()).current;
 
@@ -71,7 +205,7 @@ export default function PlannerTab() {
         setSelectedIds(new Set(data.selections || []));
         setSync("✓ Loaded", "ok");
       } catch {
-        setSync("⚠ Offline — showing cached picks", "err");
+        setSync("⚠ Offline", "err");
         const cache = localStorage.getItem("scce_cache");
         if (cache) setSelectedIds(new Set(JSON.parse(cache)));
       }
@@ -79,254 +213,155 @@ export default function PlannerTab() {
     load();
   }, [UID]);
 
-  function toggle(id) {
+  function select(id) {
     setSelectedIds(prev => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
+      next.add(id);
+      debouncedSave(next);
+      return next;
+    });
+  }
+
+  function deselect(id) {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.delete(id);
       debouncedSave(next);
       return next;
     });
   }
 
   async function clearAll() {
-    if (!confirm("Clear all your picks? This cannot be undone.")) return;
+    if (!confirm("Clear all your picks?")) return;
     setSelectedIds(new Set());
     localStorage.removeItem("scce_cache");
     try {
       await fetch(`/api/agenda?action=clear&uid=${UID}`, { method: "DELETE" });
       setSync("✓ Cleared", "ok");
-    } catch {
-      setSync("Cleared locally", "err");
-    }
+    } catch { setSync("Cleared locally", "err"); }
   }
-
-  // ── Filter ────────────────────────────────────────────────────────────────
-  const qN = filterName.toLowerCase().trim();
-  const qC = filterCo.toLowerCase().trim();
-
-  const filtered = SESSIONS.filter(s => {
-    if (activeDay !== "All Days" && s.day !== activeDay) return false;
-    if (filterTrack !== "ALL" && s.track !== filterTrack) return false;
-    if (filterLive === "yes" && !s.live)  return false;
-    if (filterLive === "no"  &&  s.live)  return false;
-    if (!qN && !qC) return true;
-    return s.sp.some(n => {
-      const { co = "" } = (window.__spkr?.[n] ?? {});
-      return (!qN || n.toLowerCase().includes(qN)) &&
-             (!qC || co.toLowerCase().includes(qC));
-    });
-  });
-
-  // ── Analytics ─────────────────────────────────────────────────────────────
-  const spCount = {};
-  SESSIONS.forEach(s => s.sp.forEach(n => { spCount[n] = (spCount[n] || 0) + 1; }));
-  const multiSpeakers = Object.entries(spCount).filter(([, c]) => c > 1).sort((a, b) => b[1] - a[1]);
-
-  const takenSlots = {};
-  selectedIds.forEach(id => {
-    const s = SESSIONS.find(x => x.id === id);
-    if (s) takenSlots[slotKey(s)] = id;
-  });
-
-  const sidebarItems = [...selectedIds]
-    .map(id => SESSIONS.find(s => s.id === id))
-    .filter(Boolean)
-    .sort((a, b) => DAY_ORDER[a.day] - DAY_ORDER[b.day] || a.time.localeCompare(b.time));
 
   function exportCSV() {
-    if (!sidebarItems.length) { alert("No sessions selected."); return; }
+    const items = [...selectedIds]
+      .map(id => SESSIONS.find(s => s.id === id)).filter(Boolean)
+      .sort((a, b) => DAY_ORDER[a.day] - DAY_ORDER[b.day] || a.time.localeCompare(b.time));
+    if (!items.length) { alert("No sessions selected."); return; }
     const rows = [["ID","Day","Time","Track","Title","Speakers","Live"]];
-    sidebarItems.forEach(s => rows.push([
-      s.id, s.day, s.time, s.track,
-      `"${s.title.replace(/"/g,'""')}"`,
-      `"${s.sp.join("; ")}"`,
-      s.live ? "Yes" : "No",
-    ]));
-    const blob = new Blob([rows.map(r => r.join(",")).join("\n")], { type: "text/csv" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob); a.download = "SCCE_CEI_2026_MyAgenda.csv"; a.click();
+    items.forEach(s => rows.push([s.id,s.day,s.time,s.track,`"${s.title.replace(/"/g,'""')}"`,`"${s.sp.join("; ")}"`,s.live?"Yes":"No"]));
+    const blob = new Blob([rows.map(r=>r.join(",")).join("\n")],{type:"text/csv"});
+    const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="SCCE_CEI_2026_MyAgenda.csv"; a.click();
   }
 
-  // group sessions by time slot within the current view
-  const byTime = {};
-  filtered.forEach(s => {
-    const k = `${s.day}||${s.time}`;
-    if (!byTime[k]) byTime[k] = { day: s.day, time: s.time, sessions: [] };
-    byTime[k].sessions.push(s);
-  });
-  const timeSlots = Object.values(byTime).sort((a, b) =>
-    DAY_ORDER[a.day] - DAY_ORDER[b.day] || a.time.localeCompare(b.time)
-  );
+  const slots = getSlotsForDay(activeDay);
+  const daySelected = slots.filter(sl => sl.sessions.some(s => selectedIds.has(s.id)));
+  const totalSelected = selectedIds.size;
 
-  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div style={s.root}>
 
-      {/* ── TOP HEADER ── */}
+      {/* ── TOP BAR ── */}
       <div style={s.topBar}>
         <div>
           <h1 style={s.h1}>SCCE CEI 2026</h1>
           <p style={s.sub}>25th Annual Compliance &amp; Ethics Institute · Rosen Shingle Creek, Orlando FL</p>
         </div>
         <div style={s.uidBox}>
-          <div style={s.uidLabel}>Your ID
-            <button style={s.uidCopy} onClick={() => { navigator.clipboard.writeText(UID); setSync("Copied!", "ok"); }}>
-              Copy
-            </button>
-          </div>
-          <div style={s.uidVal}>{UID.slice(0, 18)}…</div>
-          {syncMsg && (
-            <div style={{ fontSize: "11px", marginTop: "3px", color: syncType === "ok" ? "#166534" : syncType === "err" ? "#dc2626" : "#64748b" }}>
-              {syncMsg}
-            </div>
-          )}
+          <span style={s.uidLabel}>Your ID </span>
+          <span style={s.uidVal}>{UID.slice(0,14)}…</span>
+          <button style={s.uidCopy} onClick={() => { navigator.clipboard.writeText(UID); setSync("Copied!", "ok"); }}>Copy</button>
+          {syncMsg && <span style={{ marginLeft: "10px", fontSize: "11px", color: syncType==="ok"?"#86efac":syncType==="err"?"#fca5a5":"#94a3b8" }}>{syncMsg}</span>}
         </div>
       </div>
 
       {/* ── DAY TABS ── */}
-      <div style={s.dayTabsWrap}>
-        <div style={s.dayTabs}>
-          {DAYS.map(day => (
-            <button
-              key={day}
-              style={{ ...s.dayTab, ...(activeDay === day ? s.dayTabActive : {}) }}
-              onClick={() => setActiveDay(day)}
-            >
-              <span style={s.dayTabName}>{day === "All Days" ? "All Days" : day}</span>
-              <span style={{ ...s.dayTabSub, ...(activeDay === day ? { color: "#93c5fd" } : {}) }}>
-                {day === "All Days" ? `${SESSIONS.filter(x => x.sp.length > 0).length} sessions` : DAY_SUBTITLES[day]}
+      <div style={s.tabsBar}>
+        {DAYS.map(day => {
+          const daySlots = getSlotsForDay(day);
+          const filled = daySlots.filter(sl => sl.sessions.some(s => selectedIds.has(s.id))).length;
+          const total  = daySlots.filter(sl => sl.sessions.some(s => s.sp.length > 0)).length;
+          const isActive = activeDay === day;
+          return (
+            <button key={day} style={{ ...s.tab, ...(isActive ? s.tabActive : {}) }} onClick={() => setActiveDay(day)}>
+              <span style={s.tabDay}>{day}</span>
+              <span style={{ ...s.tabSub, ...(isActive?{color:"#93c5fd"}:{}) }}>{DAY_SUBTITLES[day]}</span>
+              <span style={{ ...s.tabPill, background: filled > 0 ? "#2563eb" : "#334155", color: filled > 0 ? "#fff" : "#64748b" }}>
+                {filled}/{total}
               </span>
             </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── STATS STRIP ── */}
-      <div style={s.statsStrip}>
-        <div style={s.statItem}><strong>{Object.keys(spCount).length}</strong> speakers</div>
-        <div style={s.statDivider} />
-        <div style={s.statItem}><strong>{SESSIONS.filter(x => x.sp.length > 0).length}</strong> sessions</div>
-        <div style={s.statDivider} />
-        <div style={s.statItem}><strong style={{ color: "#2563eb" }}>{selectedIds.size}</strong> selected</div>
-        <div style={s.statDivider} />
-        {multiSpeakers.slice(0, 3).map(([n, c]) => (
-          <div key={n} style={s.statItem}>
-            <span style={{ fontSize: "11px", color: "#64748b" }}>{n.split(" ").pop()}</span>
-            <span style={s.multiBadge}>{c}×</span>
-          </div>
-        ))}
-        {multiSpeakers.length > 3 && (
-          <div style={{ ...s.statItem, color: "#64748b", fontSize: "11px" }}>+{multiSpeakers.length - 3} more multi-session</div>
-        )}
-      </div>
-
-      {/* ── FILTERS ── */}
-      <div style={s.filtersRow}>
-        <input style={s.fInput} value={filterName} onChange={e => setFilterName(e.target.value)} placeholder="🔍 Search speaker…" />
-        <input style={s.fInput} value={filterCo}   onChange={e => setFilterCo(e.target.value)}   placeholder="🏢 Search company…" />
-        <select style={s.fInput} value={filterTrack} onChange={e => setFilterTrack(e.target.value)}>
-          <option value="ALL">All Tracks</option>
-          {TRACKS.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
-        <select style={s.fInput} value={filterLive} onChange={e => setFilterLive(e.target.value)}>
-          <option value="ALL">All Sessions</option>
-          <option value="yes">📡 Live Broadcast Only</option>
-          <option value="no">In-Person Only</option>
-        </select>
-        {(filterName || filterCo || filterTrack !== "ALL" || filterLive !== "ALL") && (
-          <button style={s.clearFilters} onClick={() => { setFilterName(""); setFilterCo(""); setFilterTrack("ALL"); setFilterLive("ALL"); }}>
-            ✕ Clear filters
-          </button>
-        )}
-        <button style={{ ...s.clearFilters, marginLeft: "auto", background: selectedIds.size ? "#1e293b" : "#e2e8f0", color: selectedIds.size ? "#fff" : "#94a3b8" }}
-          onClick={() => setShowSidebar(v => !v)}>
-          {showSidebar ? "Hide" : "Show"} Agenda ({selectedIds.size})
+          );
+        })}
+        {/* All Days summary tab */}
+        <button style={{ ...s.tab, ...(activeDay === "ALL" ? s.tabActive : {}), marginLeft: "auto" }} onClick={() => setActiveDay("ALL")}>
+          <span style={s.tabDay}>All Days</span>
+          <span style={{ ...s.tabSub, ...(activeDay==="ALL"?{color:"#93c5fd"}:{}) }}>Full schedule</span>
+          <span style={{ ...s.tabPill, background: totalSelected > 0 ? "#2563eb" : "#334155", color: totalSelected > 0 ? "#fff" : "#64748b" }}>
+            {totalSelected} picks
+          </span>
         </button>
       </div>
 
-      {/* ── MAIN LAYOUT ── */}
-      <div style={{ ...s.layout, gridTemplateColumns: showSidebar ? "1fr 290px" : "1fr" }}>
+      {/* ── MAIN CONTENT ── */}
+      <div style={s.content}>
+        <div style={s.slotList}>
 
-        {/* Sessions */}
-        <div>
-          {filtered.length === 0 && (
-            <div style={s.noResults}>No sessions match your filters.</div>
-          )}
-
-          {timeSlots.map(({ day, time, sessions }) => (
-            <div key={`${day}||${time}`}>
-              {/* Time slot header */}
-              <div style={s.timeSlotHdr}>
-                {activeDay === "All Days" && (
-                  <span style={s.timeSlotDay}>{DAY_LABELS[day]}</span>
-                )}
-                <span style={s.timeSlotTime}>{time}</span>
-                <span style={s.timeSlotCount}>{sessions.length} session{sessions.length !== 1 ? "s" : ""}</span>
-              </div>
-
-              {/* Session grid — side by side if multiple at same time */}
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: sessions.length > 1 ? "repeat(auto-fill, minmax(340px, 1fr))" : "1fr",
-                gap: "12px",
-                marginBottom: "8px",
-              }}>
-                {sessions.map(session => {
-                  const isSelected = selectedIds.has(session.id);
-                  const isDisabled = !isSelected && !!takenSlots[slotKey(session)];
+          {activeDay === "ALL" ? (
+            // ── ALL DAYS VIEW ──
+            DAYS.map(day => (
+              <div key={day}>
+                <div style={s.allDayHdr}>{DAY_LABELS[day]}</div>
+                {getSlotsForDay(day).map(slot => {
+                  const selectedId = slot.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
                   return (
-                    <SessionBlock
-                      key={session.id}
-                      session={session}
-                      isSelected={isSelected}
-                      isDisabled={isDisabled}
-                      onToggle={toggle}
-                      onSpeakerClick={setBioName}
-                    />
+                    <SlotRow key={`${slot.day}|${slot.time}`} slot={slot} selectedId={selectedId}
+                      onSelect={select} onDeselect={deselect} onBioClick={setBioName} />
                   );
                 })}
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            // ── SINGLE DAY VIEW ──
+            slots.map(slot => {
+              const selectedId = slot.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
+              return (
+                <SlotRow key={`${slot.day}|${slot.time}`} slot={slot} selectedId={selectedId}
+                  onSelect={select} onDeselect={deselect} onBioClick={setBioName} />
+              );
+            })
+          )}
         </div>
 
-        {/* Sidebar */}
-        {showSidebar && (
-          <div style={s.sidebar}>
-            <div style={s.sidebarTitle}>📋 My Agenda
-              <span style={{ fontSize: "12px", fontWeight: "400", color: "#64748b", marginLeft: "6px" }}>
-                {selectedIds.size} session{selectedIds.size !== 1 ? "s" : ""}
-              </span>
-            </div>
-
-            {sidebarItems.length === 0
-              ? <div style={{ fontSize: "12px", color: "#94a3b8", fontStyle: "italic", padding: "8px 0" }}>No sessions selected yet.</div>
-              : (
-                // Group sidebar by day
-                Object.keys(DAY_LABELS).map(day => {
-                  const dayItems = sidebarItems.filter(x => x.day === day);
-                  if (!dayItems.length) return null;
-                  return (
-                    <div key={day} style={{ marginBottom: "14px" }}>
-                      <div style={s.sbDayLabel}>{day}</div>
-                      {dayItems.map(item => (
-                        <div key={item.id} style={s.sbItem}>
-                          <div style={s.sbTime}>{item.time} · {item.id}</div>
-                          <div style={s.sbTitle}>{item.title}</div>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })
-              )
-            }
-
-            <div style={{ borderTop: "1px solid #e2e8f0", marginTop: "12px", paddingTop: "12px", display: "flex", flexDirection: "column", gap: "8px" }}>
-              <button style={{ ...s.btn, background: "#2563eb" }} onClick={exportCSV}>⬇ Export CSV</button>
-              <button style={{ ...s.btn, background: "#dc2626" }} onClick={clearAll}>✕ Clear All</button>
-            </div>
+        {/* ── SIDEBAR ── */}
+        <div style={s.sidebar}>
+          <div style={s.sbHead}>My Agenda
+            <span style={s.sbCount}>{totalSelected} session{totalSelected !== 1 ? "s" : ""}</span>
           </div>
-        )}
+          {totalSelected === 0
+            ? <p style={s.sbEmpty}>Open a time slot and select a session to build your agenda.</p>
+            : DAYS.map(day => {
+                const dayItems = [...selectedIds]
+                  .map(id => SESSIONS.find(s => s.id === id))
+                  .filter(s => s?.day === day)
+                  .sort((a,b) => a.time.localeCompare(b.time));
+                if (!dayItems.length) return null;
+                return (
+                  <div key={day} style={{ marginBottom: "16px" }}>
+                    <div style={s.sbDayLabel}>{day}</div>
+                    {dayItems.map(item => (
+                      <div key={item.id} style={s.sbItem}>
+                        <div style={s.sbItemTime}>{item.time}</div>
+                        <div style={s.sbItemTitle}>{item.title}</div>
+                        <button style={s.sbRemove} onClick={() => deselect(item.id)}>✕</button>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })
+          }
+          <div style={s.sbActions}>
+            <button style={{ ...s.btn, background: "#2563eb" }} onClick={exportCSV}>⬇ Export CSV</button>
+            {totalSelected > 0 && <button style={{ ...s.btn, background: "#dc2626" }} onClick={clearAll}>✕ Clear All</button>}
+          </div>
+        </div>
       </div>
 
       {bioName && <BioModal name={bioName} onClose={() => setBioName(null)} />}
@@ -335,53 +370,82 @@ export default function PlannerTab() {
 }
 
 const s = {
-  root:       { fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", minHeight: "100vh", background: "#f8fafc" },
+  root:      { fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", minHeight:"100vh", background:"#f1f5f9" },
 
   // top bar
-  topBar:     { background: "#1e293b", color: "#fff", padding: "16px 28px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" },
-  h1:         { margin: 0, fontSize: "20px", fontWeight: "800", letterSpacing: "-0.5px" },
-  sub:        { margin: "3px 0 0", fontSize: "12px", color: "#94a3b8" },
-  uidBox:     { fontSize: "11px", textAlign: "right" },
-  uidLabel:   { color: "#94a3b8", marginBottom: "2px", display: "flex", alignItems: "center", gap: "8px", justifyContent: "flex-end" },
-  uidVal:     { fontFamily: "monospace", color: "#cbd5e1", fontSize: "10px" },
-  uidCopy:    { background: "#334155", color: "#cbd5e1", border: "none", borderRadius: "3px", padding: "2px 8px", fontSize: "10px", cursor: "pointer" },
+  topBar:    { background:"#0f172a", color:"#fff", padding:"14px 28px", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:"10px" },
+  h1:        { margin:0, fontSize:"18px", fontWeight:"800", letterSpacing:"-0.5px" },
+  sub:       { margin:"2px 0 0", fontSize:"11px", color:"#64748b" },
+  uidBox:    { display:"flex", alignItems:"center", gap:"6px", fontSize:"11px" },
+  uidLabel:  { color:"#64748b" },
+  uidVal:    { fontFamily:"monospace", color:"#94a3b8" },
+  uidCopy:   { background:"#1e293b", color:"#94a3b8", border:"none", borderRadius:"3px", padding:"2px 8px", fontSize:"10px", cursor:"pointer" },
 
-  // day tabs
-  dayTabsWrap:{ background: "#0f172a", padding: "0 28px", overflowX: "auto" },
-  dayTabs:    { display: "flex", gap: "2px", minWidth: "max-content" },
-  dayTab:     { background: "none", border: "none", borderBottom: "3px solid transparent", color: "#94a3b8", padding: "14px 20px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "2px", transition: "color .15s" },
-  dayTabActive:{ borderBottomColor: "#3b82f6", color: "#fff" },
-  dayTabName: { fontSize: "13px", fontWeight: "700" },
-  dayTabSub:  { fontSize: "10px", color: "#64748b" },
-
-  // stats strip
-  statsStrip: { background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "10px 28px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" },
-  statItem:   { fontSize: "12px", color: "#0f172a", display: "flex", alignItems: "center", gap: "4px" },
-  statDivider:{ width: "1px", height: "16px", background: "#e2e8f0" },
-  multiBadge: { background: "#eff6ff", color: "#2563eb", fontSize: "10px", padding: "1px 6px", borderRadius: "8px", fontWeight: "700" },
-
-  // filters
-  filtersRow: { background: "#fff", borderBottom: "1px solid #e2e8f0", padding: "12px 28px", display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" },
-  fInput:     { padding: "7px 11px", border: "1px solid #e2e8f0", borderRadius: "6px", fontSize: "12px", background: "#f8fafc", outline: "none", minWidth: "140px" },
-  clearFilters:{ padding: "7px 12px", border: "1px solid #e2e8f0", borderRadius: "6px", fontSize: "12px", background: "#f8fafc", cursor: "pointer", color: "#475569", whiteSpace: "nowrap" },
+  // tabs
+  tabsBar:   { background:"#0f172a", borderBottom:"1px solid #1e293b", padding:"0 28px", display:"flex", gap:"2px", overflowX:"auto" },
+  tab:       { background:"none", border:"none", borderBottom:"3px solid transparent", color:"#64748b", padding:"12px 16px", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"flex-start", gap:"2px", minWidth:"100px" },
+  tabActive: { borderBottomColor:"#3b82f6", color:"#fff" },
+  tabDay:    { fontSize:"13px", fontWeight:"700" },
+  tabSub:    { fontSize:"10px", color:"#475569" },
+  tabPill:   { fontSize:"10px", fontWeight:"700", padding:"1px 7px", borderRadius:"10px", marginTop:"2px" },
 
   // layout
-  layout:     { display: "grid", gap: "0", alignItems: "start", padding: "0" },
+  content:   { display:"grid", gridTemplateColumns:"1fr 280px", gap:"0", alignItems:"start", maxWidth:"1300px", margin:"0 auto", padding:"20px 20px 40px" },
+  slotList:  { paddingRight:"20px" },
 
-  // time slot header
-  timeSlotHdr:{ display: "flex", alignItems: "baseline", gap: "10px", padding: "20px 28px 8px", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", position: "sticky", top: 0, zIndex: 10 },
-  timeSlotDay:{ fontSize: "13px", fontWeight: "800", color: "#1e293b" },
-  timeSlotTime:{ fontSize: "16px", fontWeight: "800", color: "#2563eb" },
-  timeSlotCount:{ fontSize: "11px", color: "#94a3b8", marginLeft: "auto" },
+  // all days header
+  allDayHdr: { fontSize:"15px", fontWeight:"800", color:"#0f172a", margin:"24px 0 10px", paddingBottom:"8px", borderBottom:"2px solid #2563eb" },
 
-  noResults:  { textAlign: "center", padding: "64px 28px", color: "#94a3b8", fontSize: "14px" },
+  // slot card
+  slotCard:  { background:"#fff", borderRadius:"8px", border:"1px solid #e2e8f0", padding:"14px 16px", display:"flex", alignItems:"flex-start", gap:"14px", cursor:"default" },
+  slotTime:  { fontSize:"12px", fontWeight:"800", color:"#2563eb", minWidth:"130px", paddingTop:"2px", flexShrink:0 },
+
+  // filled state
+  filledBody:   { flex:1, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:"12px" },
+  filledLeft:   { flex:1 },
+  filledMeta:   { display:"flex", gap:"6px", flexWrap:"wrap", marginBottom:"5px" },
+  filledTitle:  { fontSize:"13px", fontWeight:"700", color:"#0f172a", marginBottom:"5px" },
+  filledSpeakers:{ display:"flex", flexWrap:"wrap", gap:"6px" },
+  filledSpName: { background:"none", border:"none", padding:0, fontSize:"11px", fontWeight:"600", color:"#2563eb", textDecoration:"underline", cursor:"pointer" },
+  filledActions:{ display:"flex", flexDirection:"column", gap:"4px", flexShrink:0 },
+  swapBtn:      { background:"#eff6ff", color:"#2563eb", border:"1px solid #bfdbfe", borderRadius:"5px", padding:"4px 10px", fontSize:"11px", fontWeight:"700", cursor:"pointer", whiteSpace:"nowrap" },
+  removeBtn:    { background:"#fef2f2", color:"#dc2626", border:"1px solid #fecaca", borderRadius:"5px", padding:"4px 10px", fontSize:"11px", fontWeight:"700", cursor:"pointer" },
+
+  // open state
+  openBody:  { flex:1, display:"flex", alignItems:"center", gap:"10px", cursor:"pointer", padding:"2px 0" },
+  openLabel: { display:"flex", alignItems:"center", gap:"8px", fontSize:"12px", color:"#64748b" },
+  openDot:   { width:"8px", height:"8px", borderRadius:"50%", background:"#e2e8f0", flexShrink:0 },
+  openCount: { fontSize:"11px", color:"#94a3b8" },
+  tbdBody:   { flex:1, display:"flex", alignItems:"center", gap:"8px" },
+
+  // options panel
+  optionsPanel:{ marginLeft:"144px", marginTop:"4px", display:"flex", flexDirection:"column", gap:"8px" },
+  option:       { background:"#fff", border:"1px solid #e2e8f0", borderRadius:"8px", padding:"14px 16px", borderLeft:"3px solid #e2e8f0" },
+  optionHeader: { display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:"6px" },
+  metaRow:      { display:"flex", gap:"6px", flexWrap:"wrap", alignItems:"center" },
+  optionTitle:  { fontSize:"13px", fontWeight:"700", color:"#0f172a", marginBottom:"10px" },
+  selectBtn:    { background:"#2563eb", color:"#fff", border:"none", borderRadius:"6px", padding:"5px 14px", fontSize:"12px", fontWeight:"700", cursor:"pointer", whiteSpace:"nowrap" },
+  spChips:      { display:"flex", flexDirection:"column", gap:"5px" },
+  spChip:       { display:"flex", alignItems:"center", gap:"8px", background:"#f8fafc", borderRadius:"5px", padding:"5px 10px" },
+  spChipName:   { background:"none", border:"none", padding:0, fontSize:"12px", fontWeight:"700", color:"#2563eb", textDecoration:"underline", cursor:"pointer" },
+  liBtn:        { display:"inline-flex", alignItems:"center", marginLeft:"auto" },
+  liIcon:       { background:"#0077b5", color:"#fff", borderRadius:"3px", width:"18px", height:"18px", display:"inline-flex", alignItems:"center", justifyContent:"center" },
+
+  // shared tags
+  sid:      { background:"#eff6ff", color:"#2563eb", fontWeight:"700", fontSize:"10px", padding:"2px 7px", borderRadius:"4px", textTransform:"uppercase" },
+  trackTag: { fontSize:"10px", fontWeight:"600", background:"#f1f5f9", color:"#475569", padding:"2px 7px", borderRadius:"4px", textTransform:"uppercase" },
+  liveTag:  { fontSize:"10px", fontWeight:"700", background:"#dcfce7", color:"#166534", padding:"2px 7px", borderRadius:"4px" },
 
   // sidebar
-  sidebar:    { background: "#fff", borderLeft: "1px solid #e2e8f0", padding: "20px", position: "sticky", top: 0, height: "100vh", overflowY: "auto" },
-  sidebarTitle:{ fontSize: "14px", fontWeight: "800", borderBottom: "2px solid #e2e8f0", paddingBottom: "10px", marginBottom: "14px", display: "flex", alignItems: "baseline" },
-  sbDayLabel: { fontSize: "10px", fontWeight: "700", textTransform: "uppercase", color: "#94a3b8", letterSpacing: "0.5px", marginBottom: "6px" },
-  sbItem:     { borderLeft: "3px solid #2563eb", paddingLeft: "8px", marginBottom: "10px" },
-  sbTime:     { fontSize: "10px", fontWeight: "700", color: "#64748b" },
-  sbTitle:    { fontSize: "12px", fontWeight: "600", color: "#0f172a", lineHeight: "1.3", marginTop: "2px" },
-  btn:        { width: "100%", border: "none", padding: "9px", fontSize: "12px", fontWeight: "700", borderRadius: "6px", cursor: "pointer", color: "#fff" },
+  sidebar:     { background:"#fff", border:"1px solid #e2e8f0", borderRadius:"10px", padding:"18px", position:"sticky", top:"20px", maxHeight:"calc(100vh - 140px)", overflowY:"auto" },
+  sbHead:      { fontSize:"14px", fontWeight:"800", borderBottom:"2px solid #e2e8f0", paddingBottom:"10px", marginBottom:"14px", display:"flex", alignItems:"baseline", gap:"6px" },
+  sbCount:     { fontSize:"12px", fontWeight:"400", color:"#64748b" },
+  sbEmpty:     { fontSize:"12px", color:"#94a3b8", fontStyle:"italic", lineHeight:"1.5" },
+  sbDayLabel:  { fontSize:"10px", fontWeight:"700", textTransform:"uppercase", color:"#94a3b8", letterSpacing:"0.5px", marginBottom:"6px" },
+  sbItem:      { display:"flex", alignItems:"flex-start", gap:"8px", borderLeft:"3px solid #2563eb", paddingLeft:"8px", marginBottom:"10px" },
+  sbItemTime:  { fontSize:"10px", fontWeight:"700", color:"#64748b", whiteSpace:"nowrap", paddingTop:"2px" },
+  sbItemTitle: { fontSize:"11px", fontWeight:"600", color:"#0f172a", lineHeight:"1.3", flex:1 },
+  sbRemove:    { background:"none", border:"none", color:"#94a3b8", cursor:"pointer", fontSize:"12px", padding:"0 2px", flexShrink:0 },
+  sbActions:   { borderTop:"1px solid #e2e8f0", paddingTop:"12px", marginTop:"8px", display:"flex", flexDirection:"column", gap:"6px" },
+  btn:         { width:"100%", border:"none", padding:"9px", fontSize:"12px", fontWeight:"700", borderRadius:"6px", cursor:"pointer", color:"#fff" },
 };
