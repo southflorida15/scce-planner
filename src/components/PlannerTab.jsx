@@ -175,6 +175,11 @@ export default function PlannerTab() {
   const [syncMsg, setSyncMsg]           = useState("");
   const [syncType, setSyncType]         = useState("");
   const [activeDay, setActiveDay]       = useState("Sunday");
+  const [showFilters, setShowFilters]   = useState(true);
+  const [filterText, setFilterText]     = useState("");
+  const [filterSpeaker, setFilterSpeaker] = useState("ALL");
+  const [filterTrack, setFilterTrack]   = useState("ALL");
+  const [filterLive, setFilterLive]     = useState("ALL");
   const saveTimer = useRef(null);
   const UID = useRef(getOrCreateUID()).current;
 
@@ -262,9 +267,43 @@ export default function PlannerTab() {
     const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="SCCE_CEI_2026_MyAgenda.csv"; a.click();
   }
 
-  const slots = getSlotsForDay(activeDay);
-  const daySelected = slots.filter(sl => sl.sessions.some(s => selectedIds.has(s.id)));
   const totalSelected = selectedIds.size;
+
+  // All unique speaker names for dropdown
+  const allSpeakers = [...new Set(SESSIONS.flatMap(s => s.sp))].sort();
+
+  // Filter sessions based on search/filter state
+  function sessionMatchesFilters(session) {
+    const qText = filterText.toLowerCase().trim();
+    const textMatch = !qText || session.title.toLowerCase().includes(qText) ||
+      session.sp.some(n => n.toLowerCase().includes(qText)) ||
+      (SPEAKERS[session.sp[0]]?.co || "").toLowerCase().includes(qText);
+    const speakerMatch = filterSpeaker === "ALL" || session.sp.includes(filterSpeaker);
+    const trackMatch = filterTrack === "ALL" || session.track === filterTrack;
+    const liveMatch = filterLive === "ALL" || (filterLive === "yes" ? session.live : !session.live);
+    return textMatch && speakerMatch && trackMatch && liveMatch;
+  }
+
+  function getFilteredSlotsForDay(day) {
+    return getSlotsForDay(day).map(slot => ({
+      ...slot,
+      sessions: slot.sessions.filter(sessionMatchesFilters),
+    })).filter(slot => slot.sessions.length > 0 || slot.sessions.length === 0 && getSlotsForDay(day).find(sl => sl.time === slot.time)?.sessions.length === 0);
+  }
+
+  // When filters active, show all matching slots regardless of day tab
+  const hasActiveFilters = filterText || filterSpeaker !== "ALL" || filterTrack !== "ALL" || filterLive !== "ALL";
+  const activeFiltersCount = [filterText, filterSpeaker !== "ALL", filterTrack !== "ALL", filterLive !== "ALL"].filter(Boolean).length;
+
+  function getSlotsToRender(day) {
+    if (!hasActiveFilters) return getSlotsForDay(day);
+    return getSlotsForDay(day).map(slot => ({
+      ...slot,
+      sessions: slot.sessions.filter(sessionMatchesFilters),
+    }));
+  }
+
+  const slots = getSlotsToRender(activeDay);
 
   return (
     <div style={s.root}>
@@ -310,6 +349,57 @@ export default function PlannerTab() {
         </button>
       </div>
 
+      {/* ── FILTER PANEL ── */}
+      <div style={s.filterPanel}>
+        <div style={s.filterPanelHeader}>
+          <span style={s.filterPanelTitle}>Search and Filter Schedule Items</span>
+          <button style={s.filterToggle} onClick={() => setShowFilters(v => !v)}>
+            {showFilters ? "Hide Filters ▲" : "Show Filters ▼"}
+          </button>
+          {activeFiltersCount > 0 && (
+            <button style={s.clearFiltersBtn} onClick={() => { setFilterText(""); setFilterSpeaker("ALL"); setFilterTrack("ALL"); setFilterLive("ALL"); }}>
+              Clear all filters ({activeFiltersCount})
+            </button>
+          )}
+        </div>
+        {showFilters && (
+          <div style={s.filterGrid}>
+            <div style={s.filterGroup}>
+              <label style={s.filterLabel}>Schedule Item Search</label>
+              <div style={s.searchWrap}>
+                <span style={s.searchIcon}>🔍</span>
+                <input style={s.searchInput} value={filterText} onChange={e => setFilterText(e.target.value)} placeholder="Search by title, speaker, or company…" />
+                {filterText && <button style={s.searchClear} onClick={() => setFilterText("")}>✕</button>}
+              </div>
+            </div>
+            <div style={s.filterRow}>
+              <div style={s.filterGroup}>
+                <label style={s.filterLabel}>Speaker</label>
+                <select style={s.filterSelect} value={filterSpeaker} onChange={e => setFilterSpeaker(e.target.value)}>
+                  <option value="ALL">No Speaker Selected</option>
+                  {allSpeakers.map(n => <option key={n} value={n}>{n}</option>)}
+                </select>
+              </div>
+              <div style={s.filterGroup}>
+                <label style={s.filterLabel}>Track</label>
+                <select style={s.filterSelect} value={filterTrack} onChange={e => setFilterTrack(e.target.value)}>
+                  <option value="ALL">No Track Selected</option>
+                  {TRACKS.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+              <div style={s.filterGroup}>
+                <label style={s.filterLabel}>Broadcast</label>
+                <select style={s.filterSelect} value={filterLive} onChange={e => setFilterLive(e.target.value)}>
+                  <option value="ALL">All Sessions</option>
+                  <option value="yes">📡 Live Broadcast</option>
+                  <option value="no">In-Person Only</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* ── MAIN CONTENT ── */}
       <div style={s.content}>
         <div style={s.slotList}>
@@ -319,7 +409,7 @@ export default function PlannerTab() {
             DAYS.map(day => (
               <div key={day}>
                 <div style={s.allDayHdr}>{DAY_LABELS[day]}</div>
-                {getSlotsForDay(day).map(slot => {
+                {getSlotsToRender(day).map(slot => {
                   const selectedId = slot.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
                   return (
                     <SlotRow key={`${slot.day}|${slot.time}`} slot={slot} selectedId={selectedId}
@@ -330,13 +420,15 @@ export default function PlannerTab() {
             ))
           ) : (
             // ── SINGLE DAY VIEW ──
-            slots.map(slot => {
-              const selectedId = slot.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
-              return (
-                <SlotRow key={`${slot.day}|${slot.time}`} slot={slot} selectedId={selectedId}
-                  onSelect={select} onDeselect={deselect} onBioClick={setBioName} />
-              );
-            })
+            slots.length === 0
+              ? <div style={{ textAlign:"center", padding:"48px 20px", color:"#94a3b8", fontSize:"14px" }}>No sessions match your filters.</div>
+              : slots.map(slot => {
+                  const selectedId = slot.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
+                  return (
+                    <SlotRow key={`${slot.day}|${slot.time}`} slot={slot} selectedId={selectedId}
+                      onSelect={select} onDeselect={deselect} onBioClick={setBioName} />
+                  );
+                })
           )}
         </div>
 
@@ -458,4 +550,20 @@ const s = {
   sbRemove:    { background:"none", border:"none", color:"#94a3b8", cursor:"pointer", fontSize:"12px", padding:"0 2px", flexShrink:0 },
   sbActions:   { borderTop:"1px solid #e2e8f0", paddingTop:"12px", marginTop:"8px", display:"flex", flexDirection:"column", gap:"6px" },
   btn:         { width:"100%", border:"none", padding:"9px", fontSize:"12px", fontWeight:"700", borderRadius:"6px", cursor:"pointer", color:"#fff" },
+
+  // filter panel
+  filterPanel:       { background:"#fff", borderBottom:"1px solid #e2e8f0", padding:"16px 24px" },
+  filterPanelHeader: { display:"flex", alignItems:"center", gap:"12px", marginBottom:"12px" },
+  filterPanelTitle:  { fontSize:"14px", fontWeight:"700", color:"#0f172a" },
+  filterToggle:      { background:"none", border:"none", color:"#2563eb", fontSize:"12px", cursor:"pointer", padding:0 },
+  clearFiltersBtn:   { background:"none", border:"1px solid #e2e8f0", borderRadius:"5px", color:"#64748b", fontSize:"11px", padding:"3px 10px", cursor:"pointer", marginLeft:"auto" },
+  filterGrid:        { display:"flex", flexDirection:"column", gap:"12px" },
+  filterRow:         { display:"flex", gap:"16px", flexWrap:"wrap" },
+  filterGroup:       { display:"flex", flexDirection:"column", gap:"5px", flex:1, minWidth:"160px" },
+  filterLabel:       { fontSize:"11px", fontWeight:"700", color:"#374151", textTransform:"uppercase", letterSpacing:"0.4px" },
+  searchWrap:        { display:"flex", alignItems:"center", border:"1px solid #d1d5db", borderRadius:"6px", background:"#fff", overflow:"hidden" },
+  searchIcon:        { padding:"0 10px", fontSize:"14px", color:"#9ca3af" },
+  searchInput:       { flex:1, border:"none", outline:"none", padding:"8px 0", fontSize:"13px", color:"#0f172a" },
+  searchClear:       { background:"none", border:"none", color:"#9ca3af", cursor:"pointer", padding:"0 10px", fontSize:"14px" },
+  filterSelect:      { padding:"8px 10px", border:"1px solid #d1d5db", borderRadius:"6px", fontSize:"12px", color:"#0f172a", background:"#fff", outline:"none" },
 };
