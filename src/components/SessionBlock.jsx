@@ -7,19 +7,23 @@ const LinkedInIcon = () => (
 );
 
 export default function SessionBlock({ session, isSelected, isDisabled, onToggle, onSpeakerClick }) {
-  const { id, time, track, title, sp, live } = session;
+  const { id, track, title, sp, live } = session;
 
   return (
-    <div style={{ ...s.block, opacity: isDisabled ? 0.35 : 1 }}>
-      {/* Header row */}
+    <div style={{
+      ...s.block,
+      opacity: isDisabled ? 0.35 : 1,
+      borderLeft: isSelected ? "4px solid #2563eb" : "4px solid transparent",
+      background: isSelected ? "#f0f7ff" : "#fff",
+    }}>
+      {/* Header */}
       <div style={s.headerRow}>
         <div style={s.meta}>
           <span style={s.sid}>{id}</span>
-          <span style={s.time}>{time}</span>
           <span style={s.track}>{track}</span>
           {live && <span style={s.live}>📡 Live</span>}
         </div>
-        <label style={{ ...s.chkLabel, pointerEvents: isDisabled ? "none" : "auto" }}>
+        <label style={{ ...s.chkLabel, pointerEvents: isDisabled ? "none" : "auto", background: isSelected ? "#2563eb" : "#eff6ff", color: isSelected ? "#fff" : "#2563eb" }}>
           <input
             type="checkbox"
             checked={isSelected}
@@ -27,7 +31,7 @@ export default function SessionBlock({ session, isSelected, isDisabled, onToggle
             onChange={() => onToggle(id)}
             style={{ cursor: "pointer" }}
           />
-          {isSelected ? "✓ Selected" : "Add to Agenda"}
+          {isSelected ? "✓ Selected" : "Add"}
         </label>
       </div>
 
@@ -38,23 +42,20 @@ export default function SessionBlock({ session, isSelected, isDisabled, onToggle
       {sp.length === 0 ? (
         <div style={s.tbd}>Speaker(s) TBD</div>
       ) : (
-        <div style={s.spGrid}>
-          {sp.map((name) => {
+        <div style={s.spList}>
+          {sp.map(name => {
             const d = SPEAKERS[name] ?? {};
             return (
-              <div key={name} style={s.spCard}>
-                <button style={s.spName} onClick={() => onSpeakerClick(name)}>
-                  {name}
-                </button>
-                <div style={{ ...s.spCo, color: d.v ? "#0f172a" : "#92400e" }}>
-                  {d.co || "TBD"}
-                  {!d.v && <span style={s.unv}> ⚠ unverified</span>}
+              <div key={name} style={s.spRow}>
+                <div style={s.spLeft}>
+                  <button style={s.spName} onClick={() => onSpeakerClick(name)}>{name}</button>
+                  <span style={{ ...s.spCo, color: d.v ? "#475569" : "#b45309" }}>
+                    {d.co || "TBD"}{!d.v && <span style={s.unv}> ⚠</span>}
+                  </span>
                 </div>
-                <div style={s.spRole}>{d.role || ""}</div>
                 {d.li && (
-                  <a href={d.li} target="_blank" rel="noopener noreferrer" style={s.liLink}>
+                  <a href={d.li} target="_blank" rel="noopener noreferrer" style={s.liLink} title="LinkedIn">
                     <span style={s.liIcon}><LinkedInIcon /></span>
-                    LinkedIn
                   </a>
                 )}
               </div>
@@ -68,43 +69,25 @@ export default function SessionBlock({ session, isSelected, isDisabled, onToggle
 
 const s = {
   block: {
-    background: "#fff", borderRadius: "8px", border: "1px solid #e2e8f0",
-    padding: "18px", marginBottom: "14px",
+    background: "#fff", borderRadius: "8px",
+    border: "1px solid #e2e8f0",
+    padding: "14px 16px",
+    transition: "border-color .15s, background .15s",
   },
-  headerRow: {
-    display: "flex", justifyContent: "space-between",
-    alignItems: "flex-start", flexWrap: "wrap", gap: "8px", marginBottom: "10px",
-  },
-  meta:  { display: "flex", alignItems: "center", gap: "7px", flexWrap: "wrap" },
-  sid:   { background: "#eff6ff", color: "#2563eb", fontWeight: "700", fontSize: "11px", padding: "3px 9px", borderRadius: "4px", textTransform: "uppercase" },
-  time:  { fontSize: "11px", color: "#64748b", fontWeight: "500" },
-  track: { fontSize: "10px", fontWeight: "600", background: "#f1f5f9", color: "#475569", padding: "2px 8px", borderRadius: "4px", textTransform: "uppercase" },
-  live:  { fontSize: "10px", fontWeight: "700", background: "#dcfce7", color: "#166534", padding: "2px 8px", borderRadius: "4px" },
-  chkLabel: {
-    display: "flex", alignItems: "center", gap: "6px",
-    fontSize: "12px", fontWeight: "700", color: "#2563eb",
-    cursor: "pointer", background: "#eff6ff", padding: "5px 11px",
-    borderRadius: "6px", userSelect: "none", whiteSpace: "nowrap",
-  },
-  title: { fontSize: "15px", fontWeight: "700", color: "#0f172a", marginBottom: "14px" },
-  tbd:   { fontSize: "12px", fontStyle: "italic", color: "#64748b" },
-  spGrid:{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(210px,1fr))", gap: "10px" },
-  spCard:{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "12px" },
-  spName:{
-    background: "none", border: "none", padding: 0, margin: "0 0 3px",
-    fontSize: "13px", fontWeight: "700", color: "#2563eb",
-    textDecoration: "underline", cursor: "pointer", display: "block", textAlign: "left",
-  },
-  spCo:  { fontSize: "12px", fontWeight: "700", marginBottom: "2px" },
-  spRole:{ fontSize: "11px", color: "#64748b", marginBottom: "6px" },
-  unv:   { fontSize: "10px", fontStyle: "italic", fontWeight: "400" },
-  liLink:{
-    display: "inline-flex", alignItems: "center", gap: "4px",
-    fontSize: "11px", color: "#0077b5", textDecoration: "none",
-  },
-  liIcon:{
-    background: "#0077b5", color: "#fff", borderRadius: "2px",
-    width: "16px", height: "16px", display: "inline-flex",
-    alignItems: "center", justifyContent: "center",
-  },
+  headerRow: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px", gap: "8px" },
+  meta:      { display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" },
+  sid:       { background: "#eff6ff", color: "#2563eb", fontWeight: "700", fontSize: "10px", padding: "2px 8px", borderRadius: "4px", textTransform: "uppercase" },
+  track:     { fontSize: "10px", fontWeight: "600", background: "#f1f5f9", color: "#475569", padding: "2px 7px", borderRadius: "4px", textTransform: "uppercase" },
+  live:      { fontSize: "10px", fontWeight: "700", background: "#dcfce7", color: "#166534", padding: "2px 7px", borderRadius: "4px" },
+  chkLabel:  { display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", cursor: "pointer", padding: "4px 10px", borderRadius: "6px", userSelect: "none", whiteSpace: "nowrap", transition: "background .15s" },
+  title:     { fontSize: "13px", fontWeight: "700", color: "#0f172a", marginBottom: "10px", lineHeight: "1.4" },
+  tbd:       { fontSize: "11px", fontStyle: "italic", color: "#94a3b8" },
+  spList:    { display: "flex", flexDirection: "column", gap: "6px" },
+  spRow:     { display: "flex", alignItems: "center", justifyContent: "space-between", background: "#f8fafc", borderRadius: "5px", padding: "6px 10px" },
+  spLeft:    { display: "flex", flexDirection: "column", gap: "1px" },
+  spName:    { background: "none", border: "none", padding: 0, fontSize: "12px", fontWeight: "700", color: "#2563eb", textDecoration: "underline", cursor: "pointer", textAlign: "left" },
+  spCo:      { fontSize: "11px" },
+  unv:       { fontSize: "10px", fontStyle: "italic" },
+  liLink:    { display: "inline-flex", alignItems: "center", flexShrink: 0 },
+  liIcon:    { background: "#0077b5", color: "#fff", borderRadius: "3px", width: "20px", height: "20px", display: "inline-flex", alignItems: "center", justifyContent: "center" },
 };
