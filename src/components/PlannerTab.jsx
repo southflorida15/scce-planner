@@ -174,7 +174,7 @@ export default function PlannerTab() {
   const [bioName, setBioName]           = useState(null);
   const [syncMsg, setSyncMsg]           = useState("");
   const [syncType, setSyncType]         = useState("");
-  const [activeDay, setActiveDay]       = useState("Sunday");
+  const [activeDay, setActiveDay]       = useState("ALL");
   const [showFilters, setShowFilters]   = useState(true);
   const [filterText, setFilterText]     = useState("");
   const [filterSpeaker, setFilterSpeaker] = useState("ALL");
@@ -324,6 +324,14 @@ export default function PlannerTab() {
 
       {/* ── DAY TABS ── */}
       <div style={s.tabsBar}>
+        {/* All Days tab — first */}
+        <button style={{ ...s.tab, ...(activeDay === "ALL" ? s.tabActive : {}) }} onClick={() => setActiveDay("ALL")}>
+          <span style={s.tabDay}>All Days</span>
+          <span style={{ ...s.tabSub, ...(activeDay==="ALL"?{color:"#93c5fd"}:{}) }}>Full schedule</span>
+          <span style={{ ...s.tabPill, background: totalSelected > 0 ? "#2563eb" : "#334155", color: totalSelected > 0 ? "#fff" : "#64748b" }}>
+            {totalSelected} picks
+          </span>
+        </button>
         {DAYS.map(day => {
           const daySlots = getSlotsForDay(day);
           const filled = daySlots.filter(sl => sl.sessions.some(s => selectedIds.has(s.id))).length;
@@ -339,14 +347,6 @@ export default function PlannerTab() {
             </button>
           );
         })}
-        {/* All Days summary tab */}
-        <button style={{ ...s.tab, ...(activeDay === "ALL" ? s.tabActive : {}), marginLeft: "auto" }} onClick={() => setActiveDay("ALL")}>
-          <span style={s.tabDay}>All Days</span>
-          <span style={{ ...s.tabSub, ...(activeDay==="ALL"?{color:"#93c5fd"}:{}) }}>Full schedule</span>
-          <span style={{ ...s.tabPill, background: totalSelected > 0 ? "#2563eb" : "#334155", color: totalSelected > 0 ? "#fff" : "#64748b" }}>
-            {totalSelected} picks
-          </span>
-        </button>
       </div>
 
       {/* ── FILTER PANEL ── */}
