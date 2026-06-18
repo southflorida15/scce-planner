@@ -1,7 +1,7 @@
 // api/agenda.js
-// Vercel serverless function — SCCE CEI 2026 agenda persistence
-// Uses Vercel KV (Upstash Redis under the hood).
-// Env vars injected automatically when you connect a KV store in the Vercel dashboard:
+// SCCE CEI 2026 agenda persistence — Upstash Redis
+//
+// Env vars (injected by Vercel when you connect the Upstash KV database):
 //   KV_REST_API_URL, KV_REST_API_TOKEN
 //
 // Routes:
@@ -9,7 +9,12 @@
 //   POST   ?action=save              → body { uid, selections: [...] } → { ok, count }
 //   DELETE ?action=clear&uid=<uuid>  → { ok }
 
-import { kv } from "@vercel/kv";
+import { Redis } from "@upstash/redis";
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
 
 const KEY = (uid) => `scce:agenda:${uid}`;
 const TTL = 60 * 60 * 24 * 180; // 180 days
@@ -23,27 +28,27 @@ export default async function handler(req, res) {
   const { action, uid } = req.query;
 
   try {
-    // ── LOAD ──────────────────────────────────────────────────────────────────
+    // ── LOAD ────────────────────────────────────────────────────────────────
     if (req.method === "GET" && action === "load") {
       if (!uid) return res.status(400).json({ error: "uid required" });
-      const data = await kv.get(KEY(uid));
+      const data = await redis.get(KEY(uid));
       return res.status(200).json({ uid, selections: data ?? [] });
     }
 
-    // ── SAVE ──────────────────────────────────────────────────────────────────
+    // ── SAVE ────────────────────────────────────────────────────────────────
     if (req.method === "POST" && action === "save") {
       const { uid: bodyUid, selections } = req.body ?? {};
       const id = bodyUid || uid;
       if (!id) return res.status(400).json({ error: "uid required" });
       if (!Array.isArray(selections)) return res.status(400).json({ error: "selections must be array" });
-      await kv.set(KEY(id), selections, { ex: TTL });
+      await redis.set(KEY(id), JSON.stringify(selections), { ex: TTL });
       return res.status(200).json({ ok: true, uid: id, count: selections.length });
     }
 
-    // ── CLEAR ─────────────────────────────────────────────────────────────────
+    // ── CLEAR ───────────────────────────────────────────────────────────────
     if (req.method === "DELETE" && action === "clear") {
       if (!uid) return res.status(400).json({ error: "uid required" });
-      await kv.del(KEY(uid));
+      await redis.del(KEY(uid));
       return res.status(200).json({ ok: true, uid });
     }
 
