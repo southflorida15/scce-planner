@@ -16,6 +16,16 @@ const DAY_SUBTITLES = {
   Wednesday: "Sept 30 · Workshops",
 };
 
+// Parse "8:30 AM – 10:00 AM" → minutes since midnight for sorting
+function timeToMinutes(timeRange) {
+  const start = timeRange.split("–")[0].trim(); // "8:30 AM"
+  const [timePart, ampm] = start.split(" ");
+  let [h, m] = timePart.split(":").map(Number);
+  if (ampm === "PM" && h !== 12) h += 12;
+  if (ampm === "AM" && h === 12) h = 0;
+  return h * 60 + m;
+}
+
 // Build slot map: { "Sunday|8:30 AM – 10:00 AM": [session, session, ...] }
 function buildSlotMap() {
   const map = {};
@@ -32,7 +42,7 @@ const SLOT_MAP = buildSlotMap();
 function getSlotsForDay(day) {
   return Object.values(SLOT_MAP)
     .filter(sl => sl.day === day)
-    .sort((a, b) => a.time.localeCompare(b.time));
+    .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
 }
 
 const LinkedInIcon = () => (
@@ -244,7 +254,7 @@ export default function PlannerTab() {
   function exportCSV() {
     const items = [...selectedIds]
       .map(id => SESSIONS.find(s => s.id === id)).filter(Boolean)
-      .sort((a, b) => DAY_ORDER[a.day] - DAY_ORDER[b.day] || a.time.localeCompare(b.time));
+      .sort((a, b) => DAY_ORDER[a.day] - DAY_ORDER[b.day] || timeToMinutes(a.time) - timeToMinutes(b.time));
     if (!items.length) { alert("No sessions selected."); return; }
     const rows = [["ID","Day","Time","Track","Title","Speakers","Live"]];
     items.forEach(s => rows.push([s.id,s.day,s.time,s.track,`"${s.title.replace(/"/g,'""')}"`,`"${s.sp.join("; ")}"`,s.live?"Yes":"No"]));
@@ -341,7 +351,7 @@ export default function PlannerTab() {
                 const dayItems = [...selectedIds]
                   .map(id => SESSIONS.find(s => s.id === id))
                   .filter(s => s?.day === day)
-                  .sort((a,b) => a.time.localeCompare(b.time));
+                  .sort((a,b) => timeToMinutes(a.time) - timeToMinutes(b.time));
                 if (!dayItems.length) return null;
                 return (
                   <div key={day} style={{ marginBottom: "16px" }}>
