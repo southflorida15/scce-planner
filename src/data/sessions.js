@@ -486,6 +486,43 @@ export const DAY_LABELS = {
   Wednesday: "Wednesday, September 30",
 };
 
+
+// ─── FIXED EVENTS ──────────────────────────────────────────────────────────
+// Non-optional conference events: meals, breaks, receptions, general sessions.
+// These have no competing options — every attendee goes to the same thing —
+// so they are auto-included in everyone's agenda, not user-selectable.
+export const FIXED_EVENTS = [
+  { id:"F-SUN-01", day:"Sunday",    time:"4:30 PM – 6:00 PM",  title:"Welcome Tailgate Reception in Exhibit Hall", type:"reception" },
+
+  { id:"F-MON-01", day:"Monday",    time:"7:45 AM – 8:45 AM",  title:"Continental Breakfast in Exhibit Hall", type:"meal" },
+  { id:"F-MON-02", day:"Monday",    time:"8:45 AM – 9:00 AM",  title:"Welcome & Opening Remarks", type:"general" },
+  { id:"F-MON-03", day:"Monday",    time:"9:00 AM – 10:00 AM", title:"General Session 1 (GS1)", type:"general" },
+  { id:"F-MON-04", day:"Monday",    time:"10:00 AM – 11:00 AM",title:"Networking & Coffee in Exhibit Hall", type:"break" },
+  { id:"F-MON-05", day:"Monday",    time:"12:00 PM – 1:00 PM", title:"Lunch (provided)", type:"meal" },
+  { id:"F-MON-06", day:"Monday",    time:"1:00 PM – 1:30 PM",  title:"Networking & Dessert in Exhibit Hall", type:"break" },
+  { id:"F-MON-07", day:"Monday",    time:"2:30 PM – 3:00 PM",  title:"Networking & Coffee in Foyers", type:"break" },
+  { id:"F-MON-08", day:"Monday",    time:"4:00 PM – 4:15 PM",  title:"Networking & Coffee Break in Foyers", type:"break" },
+  { id:"F-MON-09", day:"Monday",    time:"5:15 PM – 6:45 PM",  title:"Networking Reception in Exhibit Hall", type:"reception" },
+
+  { id:"F-TUE-01", day:"Tuesday",   time:"7:45 AM – 8:45 AM",  title:"Continental Breakfast in Exhibit Hall", type:"meal" },
+  { id:"F-TUE-02", day:"Tuesday",   time:"8:45 AM – 9:00 AM",  title:"Opening Remarks & Awards Presentation", type:"general" },
+  { id:"F-TUE-03", day:"Tuesday",   time:"9:00 AM – 10:00 AM", title:"General Session 2 (GS2)", type:"general" },
+  { id:"F-TUE-04", day:"Tuesday",   time:"10:00 AM – 11:00 AM",title:"Networking & Coffee in Exhibit Hall", type:"break" },
+  { id:"F-TUE-05", day:"Tuesday",   time:"12:00 PM – 1:00 PM", title:"Lunch (provided)", type:"meal" },
+  { id:"F-TUE-06", day:"Tuesday",   time:"1:00 PM – 1:30 PM",  title:"Dessert & Prize Drawings in Exhibit Hall — Last Chance to Visit Solution Providers", type:"break" },
+  { id:"F-TUE-07", day:"Tuesday",   time:"2:30 PM – 2:45 PM",  title:"Coffee Break in Foyers", type:"break" },
+  { id:"F-TUE-08", day:"Tuesday",   time:"3:45 PM – 4:05 PM",  title:"Coffee Break", type:"break" },
+  { id:"F-TUE-09", day:"Tuesday",   time:"4:05 PM – 5:05 PM",  title:"General Session 3", type:"general" },
+  { id:"F-TUE-10", day:"Tuesday",   time:"5:05 PM – 5:10 PM",  title:"Closing Remarks", type:"general" },
+
+  { id:"F-WED-01", day:"Wednesday", time:"8:00 AM – 12:00 PM", title:"Registration Open", type:"general" },
+  { id:"F-WED-02", day:"Wednesday", time:"9:30 AM – 9:45 AM",  title:"Coffee Break", type:"break" },
+  { id:"F-WED-03", day:"Wednesday", time:"10:45 AM – 11:00 AM",title:"Coffee Break", type:"break" },
+  { id:"F-WED-04", day:"Wednesday", time:"1:30 PM – 1:45 PM",  title:"Exam Check-In: CCEP© and CCEP-I©", type:"exam" },
+  { id:"F-WED-05", day:"Wednesday", time:"1:45 PM – 4:45 PM",  title:"Certified Compliance & Ethics Professional (CCEP)© Exam (optional)", type:"exam" },
+  { id:"F-WED-06", day:"Wednesday", time:"1:45 PM – 5:45 PM",  title:"Certified Compliance & Ethics Professional-International (CCEP-I)© Exam (optional)", type:"exam" },
+];
+
 export const SESSIONS = [
   // ── SUNDAY ──────────────────────────────────────────────────────────────────
   { id:"P01", day:"Sunday",    time:"8:30 AM – 10:00 AM",  live:false, track:"General Compliance/Hot Topics",   title:"Compliance Home Makeover: Taking Your Program from Rundown to Remarkable",                                                                        sp:["Shannon Jamison","Virginia MacSuibhne"], desc:["Identify the key first steps for assessing your program and where to start in your Compliance Home Makeover", "Discover smart, affordable ways to improve your compliance program with fixes that keep your makeover on track", "Use a risk-based blueprint to spot the compliance cracks that matter most before adding decorative upgrades"] },

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { SESSIONS, TRACKS, DAY_ORDER, DAY_LABELS, SPEAKERS } from "../data/sessions";
+import { SESSIONS, FIXED_EVENTS, TRACKS, DAY_ORDER, DAY_LABELS, SPEAKERS } from "../data/sessions";
 import BioModal from "./BioModal";
 
 function getOrCreateUID() {
@@ -43,6 +43,50 @@ function getSlotsForDay(day) {
   return Object.values(SLOT_MAP)
     .filter(sl => sl.day === day)
     .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+}
+
+function getFixedEventsForDay(day) {
+  return FIXED_EVENTS.filter(e => e.day === day)
+    .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+}
+
+// Merge selectable slots and fixed events into one chronological timeline for a day.
+// Returns array of { kind: "slot" | "fixed", time, ...data }
+function getTimelineForDay(day, slots) {
+  const fixed = getFixedEventsForDay(day).map(e => ({ kind: "fixed", ...e }));
+  const slotItems = slots.map(sl => ({ kind: "slot", ...sl }));
+  return [...fixed, ...slotItems].sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+}
+
+const EVENT_TYPE_STYLE = {
+  meal:      { icon: "🍽️", bg: "#fef9c3", border: "#fde047", text: "#854d0e" },
+  break:     { icon: "☕",  bg: "#f1f5f9", border: "#cbd5e1", text: "#475569" },
+  reception: { icon: "🥂",  bg: "#fae8ff", border: "#e9d5ff", text: "#86198f" },
+  general:   { icon: "🎤",  bg: "#dbeafe", border: "#93c5fd", text: "#1e40af" },
+  exam:      { icon: "📝",  bg: "#fee2e2", border: "#fecaca", text: "#991b1b" },
+};
+
+function FixedEventRow({ event }) {
+  const style = EVENT_TYPE_STYLE[event.type] || EVENT_TYPE_STYLE.general;
+  return (
+    <div style={{ marginBottom: "8px" }}>
+      <div style={{
+        background: style.bg, border: `1px solid ${style.border}`, borderRadius: "8px",
+        padding: "10px 16px", display: "flex", alignItems: "center", gap: "14px",
+      }}>
+        <div style={{ fontSize: "11px", fontWeight: "800", color: style.text, minWidth: "130px", flexShrink: 0 }}>
+          {event.time}
+        </div>
+        <div style={{ fontSize: "13px", display: "flex", alignItems: "center", gap: "8px", color: style.text, fontWeight: "600" }}>
+          <span>{style.icon}</span>
+          {event.title}
+        </div>
+        <span style={{ marginLeft: "auto", fontSize: "10px", fontWeight: "700", color: style.text, opacity: 0.7, whiteSpace: "nowrap" }}>
+          Included for all attendees
+        </span>
+      </div>
+    </div>
+  );
 }
 
 const LinkedInIcon = () => (
@@ -452,10 +496,13 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
             DAYS.map(day => (
               <div key={day}>
                 <div style={s.allDayHdr}>{DAY_LABELS[day]}</div>
-                {getSlotsToRender(day).map(slot => {
-                  const selectedId = slot.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
+                {getTimelineForDay(day, getSlotsToRender(day)).map(item => {
+                  if (item.kind === "fixed") {
+                    return <FixedEventRow key={item.id} event={item} />;
+                  }
+                  const selectedId = item.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
                   return (
-                    <SlotRow key={`${slot.day}|${slot.time}`} slot={slot} selectedId={selectedId}
+                    <SlotRow key={`${item.day}|${item.time}`} slot={item} selectedId={selectedId}
                       onSelect={select} onDeselect={deselect} onBioClick={setBioName}
                       highlightSessionId={jumpToSessionId} />
                   );
@@ -464,16 +511,23 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
             ))
           ) : (
             // ── SINGLE DAY VIEW ──
-            slots.length === 0
-              ? <div style={{ textAlign:"center", padding:"48px 20px", color:"#94a3b8", fontSize:"14px" }}>No sessions match your filters.</div>
-              : slots.map(slot => {
-                  const selectedId = slot.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
-                  return (
-                    <SlotRow key={`${slot.day}|${slot.time}`} slot={slot} selectedId={selectedId}
-                      onSelect={select} onDeselect={deselect} onBioClick={setBioName}
-                      highlightSessionId={jumpToSessionId} />
-                  );
-                })
+            (() => {
+              const timeline = getTimelineForDay(activeDay, slots);
+              if (timeline.length === 0) {
+                return <div style={{ textAlign:"center", padding:"48px 20px", color:"#94a3b8", fontSize:"14px" }}>No sessions match your filters.</div>;
+              }
+              return timeline.map(item => {
+                if (item.kind === "fixed") {
+                  return <FixedEventRow key={item.id} event={item} />;
+                }
+                const selectedId = item.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
+                return (
+                  <SlotRow key={`${item.day}|${item.time}`} slot={item} selectedId={selectedId}
+                    onSelect={select} onDeselect={deselect} onBioClick={setBioName}
+                    highlightSessionId={jumpToSessionId} />
+                );
+              });
+            })()
           )}
         </div>
 
