@@ -54,14 +54,14 @@ export const SPEAKERS = {
     bio: `Roxanne Bras Petraeus is Co-Founder and CEO of Ethena, a modern compliance training company with 150+ customizable course modules trusted by Pinterest, Zendesk, Notion, Figma, and more. 93% approval rating from 3.5M+ learners. U.S. Army combat veteran (Afghanistan), Harvard ROTC graduate, former McKinsey consultant, Oxford Rhodes Scholar.`,
   },
   "Mary Shirley": {
-    co: "ScionHealth", role: "VP, Chief Compliance and Privacy Officer", v: true,
+    co: "ScionHealth", role: "Chief Compliance Officer", v: true,
     li: "https://www.linkedin.com/in/iheartcompliance/",
-    bio: `Mary Shirley is VP and Chief Compliance and Privacy Officer at ScionHealth. New Zealand-qualified lawyer with 20+ years of compliance experience across five countries. Adjunct professor at George Mason University and Fordham University law schools. Author of Living Your Best Compliance Life (CCI Press, 2023). Co-host of Great Women in Compliance podcast. Compliance Week Top Mind 2019.`,
+    bio: `Mary Shirley is a New Zealand-qualified lawyer with 20 years of ethics and compliance experience spanning data privacy and antitrust regulators, in-house roles, and private practice/consultancy across five countries and four regions. Adjunct Professor of Compliance at Fordham Law and George Mason University's Antonin Scalia Law School. Author of Living Your Best Compliance Life: 65 Hacks and Cheat Codes (CCI Press, 2023) and co-author of Sending the Elevator Back Down: What We've Learned from Great Women in Compliance (CCI Press, 2020). Named Compliance Week Top Mind 2019, Trust Across America 2020 Top Thought Leader in Trust, and Excellence in Compliance Awards 2022 Mentor of the Year.`,
   },
   "Matt Kelly": {
-    co: "Radical Compliance", role: "Editor and CEO", v: true,
+    co: "Radical Compliance", role: "Editor & CEO", v: true,
     li: "https://www.linkedin.com/in/mkellycompliance/",
-    bio: `Matt Kelly is Editor and CEO of Radical Compliance, an independent publication covering corporate governance, risk, and compliance, including the widely read weekly Compliance Jobs Report. 25+ years writing about compliance; frequent SCCE and conference speaker. Known for compliance memes. Founded Radical Compliance in 2016; based in Boston area.`,
+    bio: `Matt Kelly is editor of Radical Compliance, a blog and weekly newsletter on ethics and compliance.`,
   },
   "Kara Benedict": {
     co: "Consultant", role: "Compliance Executive", v: true,
@@ -399,84 +399,334 @@ export const SPEAKERS = {
   "Gregory Bates": {
     co: "Aduna Global", role: "Chief Ethics & Compliance Officer", v: true,
     li: "",
-    bio: `Greg Bates leads the Ethics and Compliance program at Aduna Global, a global technology company. Prior to Aduna (2025), he was a Member (equity partner) at Miller & Chevalier Chartered, focusing on corporate compliance, governance, FCPA, and internal investigations. He has extensive experience advising boards, management, and legal and compliance departments of public and private companies, NGOs, and government entities on anti-corruption and fraud prevention. Spent 5+ years in-house as Compliance Director for Latin America at a Fortune 500 company under a DPA. Trilingual (English, Portuguese, Spanish); experience in dozens of countries across the Americas, Asia, Africa, and Europe.`,
+    bio: `Greg Bates leads the Ethics and Compliance program at Aduna Global, a global technology company. Prior to joining Aduna in 2025, he was a Member (equity partner) at Miller & Chevalier Chartered, focusing on corporate compliance, governance, FCPA, and internal investigations. He has extensive experience advising boards, management, and legal and compliance departments of public and private companies, NGOs, and government entities on anti-corruption and fraud prevention. Spent 5+ years in-house as Compliance Director for Latin America at a Fortune 500 company under a DPA. Trilingual (English, Portuguese, Spanish).`,
   },
   "Ken Winfield": {
     co: "Turner Construction", role: "Director of Compliance", v: true,
     li: "",
     bio: `Ken Winfield is Turner Construction's Director of Compliance, leading the enterprise-wide program that secured ISO 37001 and ISO 37301 certification across a $29B global operation. A driving force behind Turner's first enterprise AI Governance Policy, he is developing the company's AI review framework. Holds the CCEP and IEEE CertifAIEd Professional Certification. Prior to compliance leadership, he managed project controls across a $330M capital portfolio and directed a $300M Citigroup headquarters consolidation. Named a Notable Black Leader by Crain's New York Business; speaker at CIECI Conference 2024 and 2025.`,
   },
-  "Lara Golden": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
+  "Lara Golden": {
+    co: "Activision Blizzard", role: "Sr. Ethics & Compliance Project Manager", v: true,
+    li: "",
+    bio: ``,
+  },
   "Megan Simpson": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
   "Stacy Jackson": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Karyn Wilkinson": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Kelly Sargeant": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Andrew Shaddock": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Trayden Kamprath": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Guillem Casoliva-Cabana": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Nitish Upadhyaya": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Louis Perold": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Paul Zietsman": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Ann Sultan": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Fernando Dyer": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Maria Lancri": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Antonio Fernandez": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Dina Broydo": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Nicole Frazier": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Chris Cameron": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
+  "Karyn Wilkinson": {
+    co: "Spire Orthopedic Partners", role: "Chief Compliance Officer", v: true,
+    li: "",
+    bio: `Karyn Wilkinson is a strategic, results-driven executive with 20+ years of leadership experience in healthcare compliance, privacy, governance, and audit. She has led enterprise compliance initiatives across public health systems, private equity-backed organizations, startups, and multinational companies. Her expertise includes designing compliance programs aligned with OIG, DOJ, and HIPAA standards, strengthening ERM and internal audit functions, leading investigations, and integrating compliance during M&A. Board Chair of Docs for Tots; Certified Maxwell Leadership coach.`,
+  },
+  "Kelly Sargeant": {
+    co: "Ericsson", role: "Head of Global Compliance Training & Comms", v: true,
+    li: "",
+    bio: `Kelly Sargeant is Head of Global Compliance Training and Communications and a Senior Compliance Officer at Ericsson, leading global risk-based compliance learning initiatives focused on practical decision-making and ethical culture. Since joining Ericsson in 2020, she has developed compliance training curricula using storytelling and scenario-based learning. An accomplished public speaker, she has delivered keynotes for Fortune 100 companies, the OECD, the Library of Congress, and The Pentagon, and placed second runner-up in the Toastmasters World Championship of Public Speaking.`,
+  },
+  "Andrew Shaddock": {
+    co: "BWX Technologies, Inc.", role: "Director of Ethics and Compliance", v: true,
+    li: "",
+    bio: ``,
+  },
+  "Trayden Kamprath": {
+    co: "BWX Technologies, Inc.", role: "Legal Operations Program Manager", v: true,
+    li: "",
+    bio: `Trayden Kamprath is a Legal Operations Program Manager for BWXT, responsible for leading ethics and compliance investigations and developing training on ethics, export controls, and policy management. Prior to BWXT, he served in the US Navy as a nuclear operator for 20 years, completing four overseas deployments and two instructor tours, followed by a role as Emergency Services Supervisor for a DOE site. Member of the Defense Industry Initiative and SCCE; certified Master Training Specialist. B.A. in Business Leadership, University of Arizona.`,
+  },
+  "Guillem Casoliva-Cabana": {
+    co: "LRN Corporation", role: "Senior Ethics & Compliance Advisor", v: true,
+    li: "",
+    bio: `Guillem Casoliva-Cabana is a Senior Compliance & Ethics Advisor at LRN (EMEA and APAC) and an academic on business ethics, having completed a PhD on Integrity Management at RSM Erasmus University (2024). At LRN, he advises on program design, cultural assessments, and policy simplification, leading client projects across EMEA and APAC including Code of Conduct reinvention and Smart Code implementations.`,
+  },
+  "Nitish Upadhyaya": {
+    co: "Ropes & Gray LLP", role: "Director, Behavioral Insights", v: true,
+    li: "",
+    bio: `Nitish Upadhyaya is Director of Behavioral Insights at Ropes & Gray's Insights Lab, combining legal services with analytics and behavioral science. He holds a Masters in Behavioral Science and previously worked as a litigator specializing in multi-jurisdictional investigations and complex financial services cases. His research focuses on psychological safety in the workplace and trust between humans and robots. Prior to Ropes & Gray, he led a multi-disciplinary innovation team at another global law firm.`,
+  },
+  "Louis Perold": {
+    co: "Conformyx", role: "Principal", v: true,
+    li: "",
+    bio: `Louis Perold is Principal at Conformyx with 20+ years of experience in legal, compliance and ethics, risk and governance across industries. He has transformed global ethics and compliance risk management programs from concepts into real-world infrastructure. Chair of SCCE & HCCA, serving on the board since 2018, and a member of SCCE's faculty since 2013.`,
+  },
+  "Paul Zietsman": {
+    co: "SAP MENA", role: "Regional Compliance Manager", v: true,
+    li: "",
+    bio: `Paul Zietsman has 15+ years of experience building world-class compliance programs for multinational organizations. He began his compliance career establishing a Compliance Function after a multinational incurred a €318 million penalty for price fixing in Europe. He later spent 3 years in Saudi Arabia building a Trade Compliance function for a $22 billion petrochemical/oil joint venture. He now oversees SAP's Field Compliance Team across Europe, the Middle East and Africa.`,
+  },
+  "Ann Sultan": {
+    co: "Digital Realty Trust", role: "Senior Director and Counsel - Compliance", v: true,
+    li: "",
+    bio: `Ann Sultan is Senior Director and Counsel for Compliance at Digital Realty Trust, responsible for global anti-corruption, trade, AML, and conflict of interest compliance programs. Previously a Partner and Vice Chair of the International Department at Miller & Chevalier for 12 years, where she served on multiple independent compliance monitorships and conducted dozens of investigations. Served as Secretary of the Anti-Corruption Committee of the International Bar Association until 2025; currently Treasurer of the Board of Friends of the CEELI Institute.`,
+  },
+  "Fernando Dyer": {
+    co: "UNACEM Corp. S.A.A.", role: "Chief Risk and Compliance Officer", v: true,
+    li: "",
+    bio: ``,
+  },
+  "Maria Lancri": {
+    co: "Squair", role: "Attorney, Partner", v: true,
+    li: "",
+    bio: `Maria Lancri has extensive experience assisting listed groups and SMEs with projects in France and abroad, including internal and counterparty audits and tailored compliance programs. Prior to Squair, she worked at leading French law firms and in-house as Deputy General Counsel and Compliance Manager. She teaches in the ESSEC Advanced Certificate program and the IRIS program, and is a member of the Scientific Committee of the DU Ethique & Compliance des Affaires at Paris 1 Panthéon-Sorbonne. LL.M. from Southern Methodist University; Master's from Université de Nice.`,
+  },
+  "Antonio Fernandez": {
+    co: "TBD", role: "Regional Compliance Monitor", v: true,
+    li: "",
+    bio: ``,
+  },
+  "Dina Broydo": {
+    co: "BDO USA, P.C.", role: "Senior Manager", v: true,
+    li: "",
+    bio: `Dina Broydo is a Senior Manager in BDO's Forensic Practice, assisting companies with corporate monitorships, internal investigations, anti-bribery and anti-corruption risk assessments, and data analytics. Bilingual in English and Russian. She leverages data analytics and visualization tools (SQL Server, Tableau, PowerBI) to help companies develop risk-ranked strategies and identify red flags. Adjunct faculty at the University of Maryland Robert H. Smith School of Business.`,
+  },
+  "Nicole Frazier": {
+    co: "Farmer Mac", role: "Senior Analyst - Governance, Risk, and Compliance", v: true,
+    li: "",
+    bio: `Nicole Campaña Frazier is a governance and compliance executive with 10+ years of investigative expertise leading enterprise risk, regulatory compliance, and third-party oversight functions. She has built and matured programs across financial services, federal contracting, and supply-chain environments, specializing in SOX controls, policy governance, and audit readiness.`,
+  },
+  "Chris Cameron": {
+    co: "BP America", role: "Director of Ethics and Compliance", v: true,
+    li: "",
+    bio: `Chris Cameron is the Director of Ethics and Compliance for bp's Gulf of America and Canada business. He joined the E&C community in 2023 after serving in various leadership roles in Operations and Maintenance organizations globally, with 20+ years of O&M experience spanning Asia, Europe, and the Americas.`,
+  },
   "Sarah Abrams": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Salvador Dahan": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Carrie Penman": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Cynthia Cooper": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Jane Norberg": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Eloy Rizzo Neto": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Luciana Silveira": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Camilla Reis": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/camilla-reis-33747526/", bio: "" },
-  "Guilherme Rios": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/guilherme--rios/?locale=en", bio: "" },
-  "Britt-Marie Cole-Johnson": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/brittcj/", bio: "" },
-  "Paul Perry": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Lisa Fine": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/lisarfine/", bio: "" },
-  "Nathaniel Edmonds": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/nathaniel-edmonds-7082446a/", bio: "" },
-  "Andy Dunbar": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/andrewjdunbar/", bio: "" },
-  "Krista Muszak": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/kristamuszak/", bio: "" },
-  "Krista Wolff": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/kristawolff/", bio: "" },
-  "Jessica Cossalter": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/jessica-cossalter-38276083/", bio: "" },
-  "Stephanie Greenfield": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/stephanie-greenfield-ccep-87a3b660/", bio: "" },
-  "Hayley Tozeski": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/hayley-tozeski/", bio: "" },
-  "Mara Senn": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/marasenn/", bio: "" },
-  "Kiersten Boyce": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/kiersten-boyce-032b4a25/", bio: "" },
-  "Segev Shani": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/segevshani/", bio: "" },
-  "Kevin Riddell": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/kevinriddellcclp/", bio: "" },
-  "Daniel Glad": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/danielwglad/", bio: "" },
-  "James Attridge": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/james-attridge-66303354/", bio: "" },
-  "Ashley Dubriwny": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/ashley-dubriwny/", bio: "" },
-  "Ricardo De Araujo": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/rsaraujo/", bio: "" },
-  "Ursula Schmidt": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/schmidt-advisory/", bio: "" },
-  "Amy Gutman": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Tobias Kruis": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/dr-tobias-kruis-ll-m-ccep-i-59625548/", bio: "" },
-  "Uli Rau": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/uli-rau-a37903123/", bio: "" },
-  "David Carney": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/davidecarney/", bio: "" },
-  "Daniel Christmas": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/danielpchristmas/", bio: "" },
-  "David Peet": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/david-peet-b6034218/", bio: "" },
-  "Joby Philip": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/jobyvphilip/", bio: "" },
-  "Jonathan Marks": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/jonathantmarks/", bio: "" },
-  "Sarah Iles": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/sarah-r-iles/", bio: "" },
-  "Tasha Turnbow": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/tashacturnbow/", bio: "" },
-  "Kristin Andrade": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/kristin-andrade-cfe-ccep-90884712/", bio: "" },
-  "Tom Lucek": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/tom-lucek/", bio: "" },
-  "Gwendolyn Lee Hassan": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/gwenhassan/", bio: "" },
-  "Melanie Sponholz": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/melaniesponholz/", bio: "" },
-  "Candice Monroe": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/candice-monroe/", bio: "" },
-  "Mike Olshavsky": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/michaelolshavsky/", bio: "" },
-  "Nakis Urfi": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/nurfi/", bio: "" },
-  "Scott Intner": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/scott-intner-jd-chc-chpc-b07b717/", bio: "" },
-  "Shawn Marchese": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/shawn-e-marchese/", bio: "" },
-  "Jeffrey Lyon": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
+  "Salvador Dahan": {
+    co: "UN World Food Programme", role: "Director and Chief Risk Officer", v: true,
+    li: "",
+    bio: `Salvador Dahan has 25 years of experience in Compliance, Risk and Governance, having worked at Procter & Gamble, Gerdau Group, and Nissan Motors. From 2021-2023, he served as Chief Governance and Compliance Officer at Petrobras, leading an organizational turnaround following the car-wash corruption scandal. He is currently Director and Chief Risk Officer for the UN World Food Programme, based in Rome. Law degree from Mackenzie University; MBA in Risk and Security Management; INSEAD International Directors Program certification.`,
+  },
+  "Carrie Penman": {
+    co: "NAVEX", role: "Chief Risk and Compliance Officer", v: true,
+    li: "",
+    bio: `Carrie Penman is one of the earliest ethics officers in the industry, having served four years as deputy director of the Ethics and Compliance Officer Association (now ECI) and developed the first corporate-wide global ethics program at Westinghouse Electric Corporation (1994-1999). She now leads NAVEX's risk management processes and internal ethics and compliance program, with 15+ years advising boards and executive teams. Awarded the inaugural Lifetime Achievement Award for Excellence in Compliance 2020 by Compliance Week; received ECI's Carol R. Marshall Award for Innovation in Corporate Ethics in 2017.`,
+  },
+  "Cynthia Cooper": {
+    co: "TBD", role: "Compliance Operations Program Manager", v: true,
+    li: "",
+    bio: ``,
+  },
+  "Jane Norberg": {
+    co: "Arnold & Porter", role: "Partner - Securities Enforcement and Litigation", v: true,
+    li: "",
+    bio: `Jane Norberg is the former Chief of the Office of the Whistleblower at the SEC and a former Special Agent with the U.S. Secret Service. She helped develop and lead the SEC's whistleblower program since near its inception, achieving record-breaking growth in tips received. At Arnold & Porter, she represents companies and individuals in whistleblower matters, securities enforcement defense, and internal investigations. Leading expert on Exchange Act Rule 21F-17 whistleblower protection cases.`,
+  },
+  "Eloy Rizzo Neto": {
+    co: "Demarest Advogados", role: "Partner", v: true,
+    li: "",
+    bio: `Eloy Rizzo Neto is a Partner in the Corporate Investigations area at Demarest, focused on Compliance and ESG. He holds an LLM in Competition Law and International Arbitration from King's College London and a postgraduate degree from PUC-SP. He has significant experience in complex internal investigations involving anti-corruption laws in multi-jurisdictional cases. Recognized by Chambers Latin America, Who's Who Legal, and named 'Compliance Lawyer of the Year' by Legal 500 Brazil Awards 2025.`,
+  },
+  "Luciana Silveira": {
+    co: "Boston Metal", role: "Chief Compliance Officer", v: true,
+    li: "",
+    bio: ``,
+  },
+  "Camilla Reis": {
+    co: "Vale", role: "Director", v: true,
+    li: "https://www.linkedin.com/in/camilla-reis-33747526/",
+    bio: `Camilla Reis is the Global Director of Corporate Integrity at Vale, leading a global team of 27 professionals across Brazil, the Netherlands, China, Oman, and Malaysia. With 20+ years at Vale, she has shaped the company's Ethics and Compliance Program, overseeing its global implementation and governance. Law degree with expertise in corporate law, antitrust, and compliance, including international experience in Brussels in competition law.`,
+  },
+  "Guilherme Rios": {
+    co: "Vale", role: "Head of Audit & Compliance APACEME", v: true,
+    li: "https://www.linkedin.com/in/guilherme--rios/?locale=en",
+    bio: `Guilherme Rios has 20+ years of experience in Ethics & Compliance, Audit and Investigations across mining and commodities. He leads Audit & Compliance functions across Asia-Pacific, Europe, and the Middle East at Vale, based in the Netherlands. Economics degree and Executive MBA from INSEAD; certifications include CCEP-I, CIA, CFE, CRMA, CCSA, and the William S. Smith Certificate of Excellence from the Institute of Internal Auditors.`,
+  },
+  "Britt-Marie Cole-Johnson": {
+    co: "Robinson & Cole LLP", role: "Partner", v: true,
+    li: "https://www.linkedin.com/in/brittcj/",
+    bio: `Britt-Marie Cole-Johnson is a partner in Robinson+Cole's Labor and Employment Group and chair of its Workplace Investigations Group, a three-term member of the AWI Board of Directors. Nationally recognized for leading complex, high-stakes workplace investigations involving senior executives and boards. Named to Best Lawyers in America for Employment Law 2024-2025; recognized in Chambers USA since 2014.`,
+  },
+  "Paul Perry": {
+    co: "TBD", role: "Member", v: true,
+    li: "",
+    bio: `Paul Perry has been with his firm since 2004 and is a Member and practice leader of the Risk Advisory & Assurance Services Group, focusing on cybersecurity, IT projects, risk assessments, ESG/Sustainability, and internal audit. He leads the firm's Data Analysis Group and holds the Certified Information Technology Professional (CITP) certification. Co-host of Warren Averett's podcast, The Wrap.`,
+  },
+  "Lisa Fine": {
+    co: "Pearson", role: "Sr. Director, Global Ethics and Compliance", v: true,
+    li: "https://www.linkedin.com/in/lisarfine/",
+    bio: `Lisa Fine is Senior Director, Global Ethics at Pearson, working across internal investigations, risk management, and embedding ethics and compliance in business areas. Founder and co-host of the Great Women in Compliance podcast, which inspired the book Sending the Elevator Back Down (CCI 2020), co-authored with Mary Shirley. Named 2025 Mentor of the Year by Compliance Week; co-honoree of the 2024 Agora Award for Excellence in Podcasting.`,
+  },
+  "Nathaniel Edmonds": {
+    co: "DLA Piper LLP", role: "Partner", v: true,
+    li: "https://www.linkedin.com/in/nathaniel-edmonds-7082446a/",
+    bio: `Nathaniel Edmonds focuses on global government-facing investigations, particularly anti-corruption matters and multi-jurisdictional economic crime. He advises on sanctions and export control matters before OFAC, BIS, and DDTC. Former supervisor of the FCPA Unit at DOJ's Fraud Section and a principal drafter of the first edition of A Resource Guide to the U.S. Foreign Corrupt Practices Act. Nearly 10 years as a federal white-collar prosecutor.`,
+  },
+  "Andy Dunbar": {
+    co: "Herbalife", role: "Chief Risk, Ethics & Compliance Officer, SVP", v: true,
+    li: "https://www.linkedin.com/in/andrewjdunbar/",
+    bio: `Andy Dunbar is SVP and Chief Risk, Ethics & Compliance Officer at Herbalife, overseeing global Ethics and Compliance, Enterprise Risk Management, Privacy, Information Governance, and AI Governance. Previously General Counsel and CCO of Bel Air Investment Advisors; partner at Sidley Austin LLP focusing on government enforcement defense and white collar criminal defense. Began his career as an SEC enforcement lawyer in Los Angeles. B.S. from UC Davis; JD from Pepperdine Caruso School of Law.`,
+  },
+  "Krista Muszak": {
+    co: "Pfizer", role: "Strategic Advisor, Skills-based Volunteer", v: true,
+    li: "https://www.linkedin.com/in/kristamuszak/",
+    bio: `Krista Muszak, recently retired from corporate tenure, focuses on consulting and skills-based volunteerism, bridging the gap between complex global compliance and operational agility. Background spans Life Sciences, Finance, and Oil & Gas, with expertise in enterprise-wide standardization and risk mitigation.`,
+  },
+  "Krista Wolff": {
+    co: "Agilent Technologies, Inc.", role: "Legal Communications Manager", v: true,
+    li: "https://www.linkedin.com/in/kristawolff/",
+    bio: `Krista Wolff is the Legal Communications Manager for Agilent Technologies, designing employee education and communication programs for the Legal Department. BFA in Graphic Design from Rochester Institute of Technology; MFA in Graphic Design from San Diego State University. CCEP-I.`,
+  },
+  "Jessica Cossalter": {
+    co: "TBD", role: "Compliance Manager", v: true,
+    li: "https://www.linkedin.com/in/jessica-cossalter-38276083/",
+    bio: ``,
+  },
+  "Stephanie Greenfield": {
+    co: "Levi Strauss & Co", role: "Senior Manager, Global Ethics and Compliance", v: true,
+    li: "https://www.linkedin.com/in/stephanie-greenfield-ccep-87a3b660/",
+    bio: `Stephanie Greenfield is Senior Manager of Global Ethics & Compliance at Levi Strauss & Co., overseeing the company's internal ethics and compliance function. Previously led the global ethics and compliance program at Chegg, Inc. and spent nearly five years with The IRONMAN Group building its first international ethics and compliance function. CCEP; University of South Florida alum; active in SCCE and IAPP.`,
+  },
+  "Hayley Tozeski": {
+    co: "Cisco Systems, Inc.", role: "Senior Counsel, Anticorruption", v: true,
+    li: "https://www.linkedin.com/in/hayley-tozeski/",
+    bio: `Hayley Tozeski has 15 years of experience in ethics and compliance, investigations, and enforcement at a leading global law firm and Global Fortune 500 companies. She has conducted investigations on five continents and engaged with civil and criminal authorities on four continents, having lived and worked in the US, UK, Sweden, and Mozambique.`,
+  },
+  "Mara Senn": {
+    co: "GE Healthcare", role: "Global Compliance Executive", v: true,
+    li: "https://www.linkedin.com/in/marasenn/",
+    bio: `Mara V.J. Senn is a global compliance, audit, and risk executive with 20+ years of experience across corporate, government, and international institutions. Founder and CEO of Ethakos, an AI-driven compliance platform. She has led high-impact investigations at the U.S. Department of Justice, the World Bank, and as a partner at Arnold & Porter. Speaks fluent French and Spanish.`,
+  },
+  "Kiersten Boyce": {
+    co: "University of California - Riverside", role: "Chief Compliance Officer", v: true,
+    li: "https://www.linkedin.com/in/kiersten-boyce-032b4a25/",
+    bio: `Kiersten Boyce has been a higher education compliance professional since 2011, specializing in civil rights compliance (Title IX, Title VII, ADA, Title VI).`,
+  },
+  "Segev Shani": {
+    co: "Neopharma LLC", role: "Chief Compliance & Regulatory Officer", v: true,
+    li: "https://www.linkedin.com/in/segevshani/",
+    bio: `Dr. Segev Shani has served as Chief Compliance Officer for the last two decades. He is a Senior lecturer at the university level and has published numerous compliance-related articles, including in CEP and Ethikos. Past speaker at several compliance conferences including SCCE's Annual Compliance & Ethics Institute.`,
+  },
+  "Kevin Riddell": {
+    co: "RPM International Inc", role: "Director, Trade and Regulatory Compliance", v: true,
+    li: "https://www.linkedin.com/in/kevinriddellcclp/",
+    bio: `Kevin Riddell is the Global Director, Trade and Compliance for the Tremco Construction Products Group, where he has worked for over 32 years. Based in Canada, his responsibilities span the USA, Europe, Asia, and South America, covering international trade compliance including customs, import/export controls, and sanctions. Co-author of the 2-part book Practical Guide to SAP GTS; volunteers for the SAP user group ASUG. Active member of the global trade compliance community and frequent industry speaker.`,
+  },
+  "Daniel Glad": {
+    co: "U.S. Department of Justice", role: "Director, Procurement Collusion Strike Force", v: true,
+    li: "https://www.linkedin.com/in/danielwglad/",
+    bio: `Daniel Glad is the Deputy Assistant Attorney General (acting) for Criminal Enforcement, leading the DOJ Antitrust Division's criminal enforcement program — the federal government's principal authority for prosecuting cartels, bid rigging, and related criminal offenses. He supervises the Division's criminal sections, field offices, and the Procurement Collusion Strike Force. Previously Director of the Procurement Collusion Strike Force and Acting Chief of the New York Office. Began his federal career as a line prosecutor in the Antitrust Division's Chicago office. Graduate of the University of Michigan Law School.`,
+  },
+  "James Attridge": {
+    co: "Axinn, Veltrop & Harkrider LLP", role: "Partner", v: true,
+    li: "https://www.linkedin.com/in/james-attridge-66303354/",
+    bio: `James 'Jimmy' Attridge is a partner at Axinn, Veltrop & Harkrider LLP in Washington, D.C., focusing on antitrust investigations and litigation, compliance, and complex merger reviews. He served as the DOJ Antitrust Division's Chief of Staff during the Biden Administration and as a federal prosecutor overseeing cartel investigations during the Trump and Biden administrations, including implementing policy changes for corporate compliance incentives. Previously practiced antitrust law at Skadden; clerked for Judge Liam O'Grady (E.D. Va.); fellow in the Office of FTC Chairman Leibowitz.`,
+  },
+  "Ashley Dubriwny": {
+    co: "DocuSign, Inc.", role: "Head of Culture & Conduct", v: true,
+    li: "https://www.linkedin.com/in/ashley-dubriwny/",
+    bio: `Ashley Dubriwny is Head of Culture & Conduct at Docusign, focusing on global communications, Code of Conduct, and protecting against sexual harassment, with 20+ years of HR, marketing, and compliance experience. M.Ed. in Curriculum Design and Adult Instruction; graduate certificates in Psychology of Leadership and HR Transformation from Cornell.`,
+  },
+  "Ricardo De Araujo": {
+    co: "Petrobras S/A", role: "Chief Governance and Compliance Officer", v: true,
+    li: "https://www.linkedin.com/in/rsaraujo/",
+    bio: ``,
+  },
+  "Ursula Schmidt": {
+    co: "Schmidt advisory", role: "Founder & Independent Advisor/Board Member", v: true,
+    li: "https://www.linkedin.com/in/schmidt-advisory/",
+    bio: `Dr. Ursula Schmidt is the former Executive Vice President Audit & Compliance for RTL Group, where she investigated compliance cases and ran audit projects worldwide. Former Secretary to RTL Group's Audit Committee and chair of Channel Five's (UK) audit committee. After helping operations in 30+ countries set up compliance frameworks, she founded her own advisory practice. Board member and General Secretary of IIA Luxembourg; serves on several boards in Luxembourg and abroad. PhD in Economics, University of Nuremberg; CCEP-Int.; Certified Director and Financial Expert at Deutsche Börse. Speaks German, English, French, and Dutch.`,
+  },
+  "Amy Gutman": {
+    co: "ToughLoveMD", role: "CEO / Emergency Physician", v: true,
+    li: "",
+    bio: `Dr. Amy Gutman is an emergency physician, executive leader, and keynote speaker who translates metabolic science into tools for decision-making, resilience, and performance in compliance-driven industries. With 35 years of crisis medicine experience, she helps regulatory and compliance teams turn stress physiology into a strategic advantage.`,
+  },
+  "Tobias Kruis": {
+    co: "Giesecke+Devrient GmbH", role: "Head of Corporate Compliance", v: true,
+    li: "https://www.linkedin.com/in/dr-tobias-kruis-ll-m-ccep-i-59625548/",
+    bio: `Tobias Kruis is Head of Corporate Compliance at Giesecke+Devrient (G+D), a global SecurityTech company headquartered in Munich, responsible for the implementation and continuous improvement of G+D's global corporate compliance program. Prior to G+D, he was Sr. Director, Ethics & Compliance, Europe and Global Competition Counsel at TD SYNNEX, and a competition lawyer at Latham & Watkins (Brussels) and Noerr (Munich). PhD in law from Ludwig-Maximilians-University, Munich; LL.M. from King's College London. CCEP-I.`,
+  },
+  "Uli Rau": {
+    co: "Giesecke+Devrient GmbH", role: "Senior Compliance Officer", v: true,
+    li: "https://www.linkedin.com/in/uli-rau-a37903123/",
+    bio: `Uli Rau is Senior Compliance Officer at Giesecke+Devrient, a global SecurityTech company headquartered in Munich, advancing their global Compliance Management System with a focus on digitalization, risk assessment, and governance. Previously a Senior Associate at PwC leading forensic investigations and supplier audits. Master's in International Business, University of Melbourne; Bachelor's from Baden-Württemberg Cooperative State University, Mannheim.`,
+  },
+  "David Carney": {
+    co: "SECIL Law", role: "Partner", v: true,
+    li: "https://www.linkedin.com/in/davidecarney/",
+    bio: `David Carney has 25 years of experience as a government enforcement, internal investigations, and corporate compliance attorney at SECIL Law, Robinson+Cole, and Skadden, Arps, Slate, Meagher & Flom. He defends companies and individuals facing fraud, false claims, and bribery proceedings by DOJ and SEC, and conducts internal investigations for pharmaceutical, IT, accounting, and financial institution clients. Designs and assesses compliance programs across fintech, crypto, government contracting, apparel, and nonprofit sectors.`,
+  },
+  "Daniel Christmas": {
+    co: "Corning Incorporated", role: "Vice President & Chief Compliance Officer", v: true,
+    li: "https://www.linkedin.com/in/danielpchristmas/",
+    bio: `Dan Christmas was appointed VP and Chief Compliance Officer at Corning in December 2021, leading the Global Compliance organization and Data Privacy function. He joined Corning in 2007 from private law practice, became Division Counsel for Corning Specialty Materials in 2010, and served as Director, Corporate Compliance from 2017. B.A. from Georgetown University; J.D. from the University of Virginia School of Law. CCEP.`,
+  },
+  "David Peet": {
+    co: "Dentsply Sirona", role: "Director, Global Compliance Investigations Counsel", v: true,
+    li: "https://www.linkedin.com/in/david-peet-b6034218/",
+    bio: `David Peet is Director, Global Compliance Investigations Counsel at Dentsply Sirona, managing the company's global investigations function and compliance remediation processes. Before joining DS in 2023, he served as outside counsel to multinationals in high-stakes investigations, as counsel on a DOJ-appointed corporate compliance monitorship team, and in a dual investigations/counseling role for Red Hat. Previously a Partner at K&L Gates LLP and an associate at Ropes & Gray LLP.`,
+  },
+  "Joby Philip": {
+    co: "BDO USA, P.C.", role: "Senior Manager - Data Forensics", v: true,
+    li: "https://www.linkedin.com/in/jobyvphilip/",
+    bio: `Joby Philip, CPA, CFE, PMP, has 20+ years of experience in forensic investigations, financial crime risk, and data analytics across highly regulated industries. He leads complex investigations and compliance analytics initiatives, partnering with legal, compliance, and risk teams on sanctions, third-party risk, and whistleblower-driven inquiries.`,
+  },
+  "Jonathan Marks": {
+    co: "BDO USA, P.C.", role: "Partner", v: true,
+    li: "https://www.linkedin.com/in/jonathantmarks/",
+    bio: `Jonathan Marks specializes in global/complex corporate and government investigations with nearly 40 years of forensic experience, directing large teams on matters involving fraud, antitrust, cyber, bribery/corruption, money laundering, and whistleblower/retaliation. His findings have been presented to the SEC, DOJ, and FINRA. He developed the trademarked Fraud Pentagon® framework, contributed to the 2023 COSO/ACFE Fraud Risk Management Guide, and teaches forensic accounting at the MBA level. Credentials: MBA, CPA, CFF, CITP, CGMA, CFE.`,
+  },
+  "Sarah Iles": {
+    co: "Methode Electronics", role: "Chief Compliance Officer", v: true,
+    li: "https://www.linkedin.com/in/sarah-r-iles/",
+    bio: ``,
+  },
+  "Tasha Turnbow": {
+    co: "Trinity Industries", role: "Ethics and Compliance Program Manager", v: true,
+    li: "https://www.linkedin.com/in/tashacturnbow/",
+    bio: `Tasha Turnbow is a Compliance and Risk professional with 15+ years across governance roles spanning manufacturing, real estate, defense, financial services, and banking. She leads organization-wide Ethics & Compliance and Enterprise Risk Management at Trinity Industries, including risk assessments, training, board reporting, and a compliance champion network. Experienced in building and scaling corporate compliance programs within geographically dispersed organizations.`,
+  },
+  "Kristin Andrade": {
+    co: "Phillips 66", role: "Manager, Office of Ethics", v: true,
+    li: "https://www.linkedin.com/in/kristin-andrade-cfe-ccep-90884712/",
+    bio: `Kristin Andrade is Manager of the Office of Ethics at Phillips 66, leading the company's global ethics program and overseeing internal investigations across its energy businesses. CCEP and Certified Fraud Examiner with 14+ years of experience at Phillips 66, progressing from analyst to manager. B.A. in English Rhetoric; pursuing a Master of Legal Studies in Human Resources and Employment Law at Texas A&M University.`,
+  },
+  "Tom Lucek": {
+    co: "Phillips 66", role: "Sr. Advisor, Ops, Data Reporting & Technology", v: true,
+    li: "https://www.linkedin.com/in/tom-lucek/",
+    bio: `Tom Lucek is Sr. Advisor, Ops, Data Reporting & Technology for Global Ethics & Compliance at Phillips 66, designing data and technology initiatives supporting the ethics office, third-party risk, and trade compliance functions. CCEP; licensed U.S. Customs Broker; 17 years in maritime regulatory compliance prior to joining Global Ethics & Compliance. Active member of Phillips 66's AI Stewardship Committee. B.S. in Computer Science, University of Houston-Clear Lake.`,
+  },
+  "Gwendolyn Lee Hassan": {
+    co: "Unisys Corporation", role: "Vice President and Chief Compliance Officer", v: true,
+    li: "https://www.linkedin.com/in/gwenhassan/",
+    bio: `Gwen Hassan serves as VP and Chief Compliance Officer leading the global compliance program for Unisys Corporation. Previously Global Director of Compliance for CNH Industrial, the world's third largest capital goods maker. Prior roles at Navistar and Federal Signal Corporation. Founder and host of the 'Hidden Traffic' podcast on human trafficking and forced labor prevention. Adjunct professor at Loyola University School of Law; board member of Heartland Alliance. JD from DePaul University School of Law.`,
+  },
+  "Melanie Sponholz": {
+    co: "BAYADA Home Health Care", role: "Deputy Compliance Officer", v: true,
+    li: "https://www.linkedin.com/in/melaniesponholz/",
+    bio: `Melanie Sponholz, MSPT, CCEP, CHC, CHPC, is Deputy Compliance Officer for BAYADA Home Health Care, overseeing the organization's Compliance and Ethics Program across 22 states and six countries. Previously spent nine years as Chief Compliance Officer and Director of Responsible Investing at Waud Capital Partners. 15+ years as a healthcare executive spanning operations, quality assurance, and compliance. Adjunct faculty at Fordham University School of Law. B.A. from Drew University; M.S. from Columbia University College of Physicians and Surgeons.`,
+  },
+  "Candice Monroe": {
+    co: "The J.M. Smucker Company", role: "Ethics and Compliance Manager", v: true,
+    li: "https://www.linkedin.com/in/candice-monroe/",
+    bio: `Candice Monroe, MA, CCEP, is Manager, Ethics & Compliance at The J.M. Smucker Company, leading compliance training and communications, the Compliance Ambassadors program, conflict of interest management, and policy governance. She contributed to the Company's AI governance efforts and DOJ-aligned risk assessments, helping earn Ethisphere's World's Most Ethical Companies recognition in 2024, 2025, and 2026. M.A. in Organizational Communication from the University of Akron; B.A. from John Carroll University. Based in Cleveland.`,
+  },
+  "Mike Olshavsky": {
+    co: "The J.M. Smucker Company", role: "VP and Deputy General Counsel - Privacy, IP & Technology", v: true,
+    li: "https://www.linkedin.com/in/michaelolshavsky/",
+    bio: `Mike Olshavsky is VP & Deputy General Counsel for Privacy, Intellectual Property & Technology at The J.M. Smucker Co., leading enterprise legal strategy across data privacy and security, IP, and emerging technology. He advises senior leadership on regulatory developments and risk management, partnering with IT and security teams on compliant, business-forward solutions. Based at Smucker's headquarters in Orrville, Ohio.`,
+  },
+  "Nakis Urfi": {
+    co: "Cantex", role: "Consultant", v: true,
+    li: "https://www.linkedin.com/in/nurfi/",
+    bio: `Nakis Urfi provides thought leadership in AI Governance, Compliance and Ethics, and ESG, currently consulting on healthcare compliance and AI governance. Prior roles at Abbott Laboratories, Booz Allen Hamilton, Wellcare, and Babylon Health, plus federal contracting work for CMS. Board member of the SNP Alliance; board advisor to Glacis.io; Chair of the North Texas Ethics and Compliance Council. JD from the University of Houston Law Center; MPH and BS from the University of Texas.`,
+  },
+  "Scott Intner": {
+    co: "The Intner Group", role: "Healthcare Compliance Consultant", v: true,
+    li: "https://www.linkedin.com/in/scott-intner-jd-chc-chpc-b07b717/",
+    bio: `Scott Intner is a healthcare attorney and compliance executive with 20+ years building and managing compliance programs for hospital systems and academic medical practices. Currently Interim Senior Director for Compliance at Parkland Health in Dallas, and an independent consultant helping health systems restructure compliance and privacy programs and implement GRC software. Chair of HCCA's DC, MD & VA Regional Conference Planning Committee.`,
+  },
+  "Shawn Marchese": {
+    co: "Access TeleCare, LLC", role: "SVP, Compliance Officer", v: true,
+    li: "https://www.linkedin.com/in/shawn-e-marchese/",
+    bio: `Shawn Marchese is a healthcare compliance professional and public speaker with 20+ years of experience, having established compliance programs at healthcare organizations of all sizes. He speaks regularly on compliance culture and AI risk and governance. Based in Austin, Texas.`,
+  },
+  "Jeffrey Lyon": {
+    co: "TheCyberWild", role: "Founder & CEO", v: true,
+    li: "https://www.linkedin.com/in/cyber-jeff",
+    bio: `Jeff Lyon is a Business Information Security Advisor and CEO/Founder of TheCyberWild, providing security awareness training, security assessments, and governance, risk, and compliance strategies. Previously a cybersecurity practitioner at Deloitte. Vice chair of the York County Culture and Heritage Commission. MS in Management Information Systems from Nova Southeastern University; BS in Computer Engineering from Clemson University. CISM, CISSP, CCSP certified.`,
+  },
 };
 
-
-
-// ─── SESSION DATA ─────────────────────────────────────────────────────────────
+// ─── DAY METADATA ────────────────────────────────────────────────────────────
 export const DAY_ORDER = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3 };
 export const DAY_LABELS = {
   Sunday:    "Sunday, September 27",
@@ -484,7 +734,6 @@ export const DAY_LABELS = {
   Tuesday:   "Tuesday, September 29",
   Wednesday: "Wednesday, September 30",
 };
-
 
 // ─── FIXED EVENTS ──────────────────────────────────────────────────────────
 // Non-optional conference events: meals, breaks, receptions, general sessions.
@@ -522,6 +771,7 @@ export const FIXED_EVENTS = [
   { id:"F-WED-06", day:"Wednesday", time:"1:45 PM – 5:45 PM",  title:"Certified Compliance & Ethics Professional-International (CCEP-I)© Exam (optional)", type:"exam" },
 ];
 
+// ─── SESSION DATA ─────────────────────────────────────────────────────────────
 export const SESSIONS = [
   // ── SUNDAY ──────────────────────────────────────────────────────────────────
   { id:"P01", day:"Sunday",    time:"8:30 AM – 10:00 AM",  live:false, track:"General Compliance/Hot Topics",   title:"Compliance Home Makeover: Taking Your Program from Rundown to Remarkable",                                                                        sp:["Shannon Jamison","Virginia MacSuibhne"], desc:["Identify the key first steps for assessing your program and where to start in your Compliance Home Makeover", "Discover smart, affordable ways to improve your compliance program with fixes that keep your makeover on track", "Use a risk-based blueprint to spot the compliance cracks that matter most before adding decorative upgrades"] },
@@ -560,7 +810,7 @@ export const SESSIONS = [
   { id:"201", day:"Monday",    time:"1:30 PM – 2:30 PM",   live:true,  track:"General Compliance/Hot Topics",   title:"Compliance Session TBD",                                                                                                                          sp:[] },
   { id:"202", day:"Monday",    time:"1:30 PM – 2:30 PM",   live:true,  track:"Compliance Risk",                  title:"Crypto, Sanctions, and Corruption: Emerging Compliance Blind Spots",                                                                                 sp:["Patricia Marinho"], desc:["Identify corruption and sanctions risks linked to digital asset transactions and alternative payments", "Analyze how decentralized and blockchain-based systems create blind spots in traditional compliance controls", "Implement practical safeguards to mitigate digital asset-related corruption and sanctions exposure"] },
   { id:"203", day:"Monday",    time:"1:30 PM – 2:30 PM",   live:true,  track:"Professional Skills",              title:"Gen Z and the Attention Economy: Building Training and Comms That Actually Engage",                                                                   sp:["Felipe Maldonado Garcia","Hemma Lomax","Roxanne Petraeus"], desc:["Understand how digital platforms and the attention economy shape how employees consume compliance content", "Explore how trust, authenticity, and credibility influence whether employees engage with ethics messaging", "Practical techniques to modernize compliance communications and training while preserving rigor"] },
-  { id:"204", day:"Monday",    time:"1:30 PM – 2:30 PM",   live:true,  track:"Technology & Innovation",         title:"A Virtuous Cycle: Generative AI and Data Analytics",                                                                                                  sp:["Travis Waugh"], desc:["Identify opportunities for new metrics when designing generative AI applications for E&C", "Build feedback mechanisms to improve AI applications through continuous use and data", "Establish an AI Governance Committee to control system prompts and data sources"] },
+  { id:"204", day:"Monday",    time:"1:30 PM – 2:30 PM",   live:true,  track:"Technology & Innovation",         title:"A Virtuous Cycle: Generative AI and Data Analytics",                                                                                                  sp:["Jannica Houben","Travis Waugh"], desc:["Identify opportunities for new metrics when designing generative AI applications for E&C", "Build feedback mechanisms to improve AI applications through continuous use and data", "Establish an AI Governance Committee to control system prompts and data sources"] },
   { id:"205", day:"Monday",    time:"1:30 PM – 2:30 PM",   live:true,  track:"General Compliance/Hot Topics",   title:"Compliance Session TBD",                                                                                                                          sp:[] },
   { id:"206", day:"Monday",    time:"1:30 PM – 2:30 PM",   live:true,  track:"Investigations",                   title:"Smarter Cross Border Investigations: Practical AI, Real World Risks, and Evidence-Based Findings",                                                    sp:["Renata Muzzi","Shin Jae Kim"], desc:["Build a defensible cross-border investigation plan accounting for local privacy, labor, and privilege issues", "Integrate practical AI tools across the investigation lifecycle to reduce time and cost", "Understand what truly changes for U.S. teams operating abroad including data privacy and cultural dynamics"] },
   { id:"207", day:"Monday",    time:"1:30 PM – 2:30 PM",   live:true,  track:"General Compliance/Hot Topics",   title:"After the Investigation: How to Conduct Root Cause Analysis, Remediation and Integrate the Learnings Enterprise Wide",                                sp:["Bruce Bruski"], desc:["Communicate the 'how to' process of effective human factors root cause analysis (HFRCA)", "Enable participants to develop and deploy their own HFRCA programs linking to remediation", "Provide participants with knowledge to develop their own programs with confidence"] },
