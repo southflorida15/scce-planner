@@ -186,6 +186,8 @@ export default function SpeakersTab({ onSessionClick }) {
         if (filterIndustry !== "ALL" && sp.industry !== filterIndustry) return false;
         if (filterVerified === "yes" && !sp.v) return false;
         if (filterVerified === "no"  &&  sp.v) return false;
+        if (filterVerified === "linkonly" && (sp.v || !sp.li)) return false;
+        if (filterVerified === "notstarted" && (sp.v || sp.li)) return false;
         if (filterConnected === "yes" && sp.isConnected !== true)  return false;
         if (filterConnected === "no"  && sp.isConnected !== false) return false;
         if (filterMultiSession && sp.sessions.length <= 1) return false;
@@ -203,6 +205,8 @@ export default function SpeakersTab({ onSessionClick }) {
 
   const connectedCount  = connections ? allSpeakers.filter(s => s.isConnected).length : 0;
   const verifiedCount   = allSpeakers.filter(s => s.v).length;
+  const linkFoundCount  = allSpeakers.filter(s => !s.v && s.li).length;
+  const notStartedCount = allSpeakers.filter(s => !s.v && !s.li).length;
   const multiCount      = allSpeakers.filter(s => s.sessions.length > 1).length;
 
   return (
@@ -222,10 +226,18 @@ export default function SpeakersTab({ onSessionClick }) {
             <span style={s.statN}>{verifiedCount}</span><span style={s.statL}>Verified</span>
           </button>
           <button
-            style={{ ...s.stat, ...(filterVerified === "no" ? s.statActive : {}) }}
-            onClick={() => setFilterVerified(filterVerified === "no" ? "ALL" : "no")}
+            style={{ ...s.stat, ...(filterVerified === "linkonly" ? s.statActive : {}) }}
+            onClick={() => setFilterVerified(filterVerified === "linkonly" ? "ALL" : "linkonly")}
+            title="LinkedIn URL found, but company/role/bio not yet written"
           >
-            <span style={s.statN}>{allSpeakers.length - verifiedCount}</span><span style={s.statL}>Pending</span>
+            <span style={s.statN}>{linkFoundCount}</span><span style={s.statL}>Link Found</span>
+          </button>
+          <button
+            style={{ ...s.stat, ...(filterVerified === "notstarted" ? s.statActive : {}) }}
+            onClick={() => setFilterVerified(filterVerified === "notstarted" ? "ALL" : "notstarted")}
+            title="No LinkedIn URL or bio yet"
+          >
+            <span style={s.statN}>{notStartedCount}</span><span style={s.statL}>Not Started</span>
           </button>
           <button
             style={{ ...s.stat, ...(filterMultiSession ? s.statActive : {}) }}
@@ -296,7 +308,8 @@ export default function SpeakersTab({ onSessionClick }) {
         <select style={s.fInput} value={filterVerified} onChange={e => setFilterVerified(e.target.value)}>
           <option value="ALL">All Speakers</option>
           <option value="yes">✅ Verified Only</option>
-          <option value="no">⚠ Pending Verification</option>
+          <option value="linkonly">🔗 LinkedIn Found (bio pending)</option>
+          <option value="notstarted">⚪ Not Started</option>
         </select>
         {connections && (
           <select style={s.fInput} value={filterConnected} onChange={e => setFilterConnected(e.target.value)}>
@@ -334,13 +347,16 @@ export default function SpeakersTab({ onSessionClick }) {
                 {sp.name}
               </button>
               <span style={{
-                background: sp.v ? "#dcfce7" : "#fef9c3",
-                color: sp.v ? "#166534" : "#854d0e",
-                border: sp.v ? "1px solid #bbf7d0" : "1px solid #fde68a",
+                ...(sp.v
+                  ? { background: "#dcfce7", color: "#166534", border: "1px solid #bbf7d0" }
+                  : sp.li
+                    ? { background: "#dbeafe", color: "#1e40af", border: "1px solid #93c5fd" }
+                    : { background: "#fef9c3", color: "#854d0e", border: "1px solid #fde68a" }
+                ),
                 fontSize: "10px", fontWeight: "700", padding: "2px 8px",
                 borderRadius: "10px", whiteSpace: "nowrap",
               }}>
-                {sp.v ? "Verified" : "Pending"}
+                {sp.v ? "Verified" : sp.li ? "🔗 Link Found" : "Not Started"}
               </span>
             </div>
 
@@ -442,7 +458,11 @@ export default function SpeakersTab({ onSessionClick }) {
                 {sp.bio || "Biographical profile not yet available."}
               </p>
               {!sp.v && (
-                <div style={s.modalWarn}>⚠ Company and role not yet verified against LinkedIn.</div>
+                <div style={s.modalWarn}>
+                  {sp.li
+                    ? "🔗 LinkedIn profile found, but company/role/bio haven't been written up yet."
+                    : "⚠ Company, role, and LinkedIn profile not yet researched."}
+                </div>
               )}
             </div>
           </div>
