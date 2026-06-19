@@ -144,12 +144,54 @@ function SessionOption({ session, onSelect, onBioClick }) {
   );
 }
 
-function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlightSessionId, isMobile }) {
+function SelectedSessionCard({ sess, onBioClick, onRemove, isMobile, compact }) {
+  const [showDesc, setShowDesc] = useState(false);
+  return (
+    <div style={{
+      ...s.filledBody,
+      flex: 1, minWidth: 0,
+      ...(isMobile ? { flexDirection: "column", gap: "8px" } : {}),
+    }}>
+      <div style={s.filledLeft}>
+        <div style={s.filledMeta}>
+          <span style={s.sid}>{sess.id}</span>
+          {!compact && <span style={s.trackTag}>{sess.track}</span>}
+          {sess.live && <span style={s.liveTag}>📡 Live</span>}
+        </div>
+        <div style={{ ...s.filledTitle, ...(compact ? { fontSize: "12px" } : {}) }}>{sess.title}</div>
+        <div style={s.filledSpeakers}>
+          {sess.sp.map(name => (
+            <button key={name} style={s.filledSpName} onClick={() => onBioClick(name)}>{name}</button>
+          ))}
+        </div>
+        {sess.desc && sess.desc.length > 0 && (
+          <>
+            <button style={s.detailsToggle} onClick={() => setShowDesc(v => !v)}>
+              {showDesc ? "Hide details ▲" : "Details ▼"}
+            </button>
+            {showDesc && (
+              <ul style={s.descList}>
+                {sess.desc.map((line, i) => <li key={i} style={s.descItem}>{line}</li>)}
+              </ul>
+            )}
+          </>
+        )}
+      </div>
+      <div style={{ ...s.filledActions, ...(isMobile ? { flexDirection: "row" } : {}) }}>
+        <button style={s.removeBtn} onClick={onRemove} title="Remove">✕</button>
+      </div>
+    </div>
+  );
+}
+
+const MAX_PICKS_PER_SLOT = 2;
+
+function SlotRow({ slot, selectedIdsInSlot, onSelect, onDeselect, onBioClick, highlightSessionId, isMobile }) {
   const [open, setOpen] = useState(false);
   const rowRef = useRef(null);
-  const selectedSession = selectedId ? slot.sessions.find(s => s.id === selectedId) : null;
-  const isFilled = !!selectedSession;
-  const hasSessions = slot.sessions.length > 0;
+  const selectedSessions = slot.sessions.filter(s => selectedIdsInSlot.includes(s.id));
+  const isFilled = selectedSessions.length > 0;
+  const atMax = selectedSessions.length >= MAX_PICKS_PER_SLOT;
   const hasOptions = slot.sessions.some(s => s.sp.length > 0); // skip TBD-only slots
   const containsHighlight = highlightSessionId && slot.sessions.some(s => s.id === highlightSessionId);
 
@@ -162,6 +204,11 @@ function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlight
     }
   }, [containsHighlight]);
 
+  function handlePick(id) {
+    onSelect(id);
+    if (selectedSessions.length + 1 >= MAX_PICKS_PER_SLOT) setOpen(false);
+  }
+
   return (
     <div ref={rowRef} style={{
       marginBottom: "8px",
@@ -171,55 +218,33 @@ function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlight
       <div style={{
         ...s.slotCard,
         ...(isMobile ? { flexDirection: "column", gap: "8px", padding: "12px" } : {}),
-        borderLeft: isFilled ? "4px solid #2563eb" : "4px solid #e2e8f0",
-        background: isFilled ? "#f0f7ff" : open ? "#fafafa" : "#fff",
+        borderLeft: isFilled ? "4px solid #2563eb" : "4px solid #cbd5e1",
+        background: isFilled ? "#f0f7ff" : hasOptions ? (open ? "#f1f5f9" : "#f8fafc") : "#f8fafc",
       }}>
         {/* Time label */}
         <div style={{ ...s.slotTime, ...(isMobile ? { minWidth: "auto" } : {}) }}>{slot.time}</div>
 
         {isFilled ? (
-          /* FILLED STATE */
-          <div style={{ ...s.filledBody, ...(isMobile ? { flexDirection: "column", gap: "8px" } : {}) }}>
-            <div style={s.filledLeft}>
-              <div style={s.filledMeta}>
-                <span style={s.sid}>{selectedSession.id}</span>
-                <span style={s.trackTag}>{selectedSession.track}</span>
-                {selectedSession.live && <span style={s.liveTag}>📡 Live</span>}
-              </div>
-              <div style={s.filledTitle}>{selectedSession.title}</div>
-              <div style={s.filledSpeakers}>
-                {selectedSession.sp.map(name => (
-                  <button key={name} style={s.filledSpName} onClick={() => onBioClick(name)}>{name}</button>
-                ))}
-              </div>
-              {selectedSession.desc && selectedSession.desc.length > 0 && (
-                <>
-                  <button style={s.detailsToggle} onClick={() => setOpen(v => !v)}>
-                    {open ? "Hide details ▲" : "Show details ▼"}
-                  </button>
-                  {open && (
-                    <ul style={s.descList}>
-                      {selectedSession.desc.map((line, i) => <li key={i} style={s.descItem}>{line}</li>)}
-                    </ul>
-                  )}
-                </>
-              )}
-            </div>
-            <div style={{ ...s.filledActions, ...(isMobile ? { flexDirection: "row" } : {}) }}>
-              <button style={s.swapBtn} onClick={() => { onDeselect(selectedId); setOpen(true); }}>
-                ⇄ Swap
+          /* FILLED STATE — one or two side-by-side picks */
+          <div style={{
+            flex: 1, display: "flex", gap: "10px",
+            flexDirection: isMobile ? "column" : (selectedSessions.length > 1 ? "row" : "row"),
+          }}>
+            {selectedSessions.map(sess => (
+              <SelectedSessionCard key={sess.id} sess={sess} onBioClick={onBioClick} onRemove={() => onDeselect(sess.id)} isMobile={isMobile} compact={selectedSessions.length > 1} />
+            ))}
+            {!atMax && (
+              <button style={s.addAnotherBtn} onClick={() => setOpen(true)}>
+                + Add another
               </button>
-              <button style={s.removeBtn} onClick={() => { onDeselect(selectedId); setOpen(false); }}>
-                ✕
-              </button>
-            </div>
+            )}
           </div>
         ) : hasOptions ? (
-          /* OPEN STATE */
+          /* EMPTY/OPEN STATE — grey, indicates a missing selection */
           <div style={s.openBody} onClick={() => setOpen(v => !v)}>
             <div style={s.openLabel}>
-              <span style={s.openDot} />
-              Open slot
+              <span style={s.openDotEmpty} />
+              <strong style={{ color: "#64748b" }}>No selection yet</strong>
               <span style={s.openCount}>{slot.sessions.filter(s => s.sp.length > 0).length} sessions available</span>
             </div>
             <span style={{ fontSize: "18px", color: "#94a3b8", marginLeft: "auto" }}>{open ? "▲" : "▼"}</span>
@@ -227,22 +252,27 @@ function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlight
         ) : (
           /* TBD — no sessions yet */
           <div style={s.tbdBody}>
-            <span style={s.openDot} />
+            <span style={s.openDotEmpty} />
             <span style={{ fontSize: "12px", color: "#94a3b8", fontStyle: "italic" }}>Sessions TBD</span>
           </div>
         )}
       </div>
 
       {/* ── EXPANDED OPTIONS ── */}
-      {open && !isFilled && (
+      {open && !atMax && (
         <div style={{ ...s.optionsPanel, ...(isMobile ? { marginLeft: 0, marginTop: "8px" } : {}) }}>
+          {isFilled && (
+            <div style={s.secondPickNote}>
+              Pick a second session to attend in this same slot (e.g. if it repeats, or you want a backup):
+            </div>
+          )}
           {slot.sessions
-            .filter(s => s.sp.length > 0)
+            .filter(s => s.sp.length > 0 && !selectedIdsInSlot.includes(s.id))
             .map(session => (
               <SessionOption
                 key={session.id}
                 session={session}
-                onSelect={(id) => { onSelect(id); setOpen(false); }}
+                onSelect={handlePick}
                 onBioClick={onBioClick}
               />
             ))}
@@ -442,9 +472,9 @@ export default function PlannerTab({ agenda, jumpToSessionId, onJumpHandled }) {
                   if (item.kind === "fixed") {
                     return <FixedEventRow key={item.id} event={item} compact={isMobile} />;
                   }
-                  const selectedId = item.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
+                  const selectedIdsInSlot = item.sessions.filter(s => selectedIds.has(s.id)).map(s => s.id);
                   return (
-                    <SlotRow key={`${item.day}|${item.time}`} slot={item} selectedId={selectedId}
+                    <SlotRow key={`${item.day}|${item.time}`} slot={item} selectedIdsInSlot={selectedIdsInSlot}
                       onSelect={select} onDeselect={deselect} onBioClick={setBioName}
                       highlightSessionId={jumpToSessionId} isMobile={isMobile} />
                   );
@@ -462,9 +492,9 @@ export default function PlannerTab({ agenda, jumpToSessionId, onJumpHandled }) {
                 if (item.kind === "fixed") {
                   return <FixedEventRow key={item.id} event={item} compact={isMobile} />;
                 }
-                const selectedId = item.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
+                const selectedIdsInSlot = item.sessions.filter(s => selectedIds.has(s.id)).map(s => s.id);
                 return (
-                  <SlotRow key={`${item.day}|${item.time}`} slot={item} selectedId={selectedId}
+                  <SlotRow key={`${item.day}|${item.time}`} slot={item} selectedIdsInSlot={selectedIdsInSlot}
                     onSelect={select} onDeselect={deselect} onBioClick={setBioName}
                     highlightSessionId={jumpToSessionId} isMobile={isMobile} />
                 );
@@ -605,11 +635,14 @@ const s = {
   filledActions:{ display:"flex", flexDirection:"column", gap:"4px", flexShrink:0 },
   swapBtn:      { background:"#eff6ff", color:"#2563eb", border:"1px solid #bfdbfe", borderRadius:"5px", padding:"4px 10px", fontSize:"11px", fontWeight:"700", cursor:"pointer", whiteSpace:"nowrap" },
   removeBtn:    { background:"#fef2f2", color:"#dc2626", border:"1px solid #fecaca", borderRadius:"5px", padding:"4px 10px", fontSize:"11px", fontWeight:"700", cursor:"pointer" },
+  addAnotherBtn:{ background:"#f8fafc", color:"#2563eb", border:"1px dashed #93c5fd", borderRadius:"6px", padding:"8px 12px", fontSize:"11px", fontWeight:"700", cursor:"pointer", alignSelf:"center", whiteSpace:"nowrap" },
+  secondPickNote:{ fontSize:"11px", color:"#64748b", fontStyle:"italic", padding:"4px 4px 8px" },
 
   // open state
   openBody:  { flex:1, display:"flex", alignItems:"center", gap:"10px", cursor:"pointer", padding:"2px 0" },
   openLabel: { display:"flex", alignItems:"center", gap:"8px", fontSize:"12px", color:"#64748b" },
   openDot:   { width:"8px", height:"8px", borderRadius:"50%", background:"#e2e8f0", flexShrink:0 },
+  openDotEmpty: { width:"9px", height:"9px", borderRadius:"50%", background:"#94a3b8", flexShrink:0, boxShadow:"0 0 0 3px #e2e8f0" },
   openCount: { fontSize:"11px", color:"#94a3b8" },
   tbdBody:   { flex:1, display:"flex", alignItems:"center", gap:"8px" },
 

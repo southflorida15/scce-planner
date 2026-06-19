@@ -51,18 +51,7 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
     await clearAll();
   }
 
-  if (totalSelected === 0) {
-    return (
-      <div style={s.root}>
-        <div style={s.emptyState}>
-          <div style={{ fontSize: "40px", marginBottom: "12px" }}>📋</div>
-          <h2 style={s.emptyTitle}>Your agenda is empty</h2>
-          <p style={s.emptySub}>Head to the Agenda Planner to pick sessions for each time slot. They'll show up here as your personal itinerary.</p>
-          <button style={s.ctaBtn} onClick={onNavigateToPlanner}>Go to Agenda Planner →</button>
-        </div>
-      </div>
-    );
-  }
+  const noPicksYet = totalSelected === 0;
 
   return (
     <div style={s.root}>
@@ -76,14 +65,25 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
       <div style={s.header} className="no-print">
         <div>
           <h1 style={s.h1}>My Agenda</h1>
-          <p style={s.sub}>{totalSelected} session{totalSelected !== 1 ? "s" : ""} selected across {daysWithPicks.length} day{daysWithPicks.length !== 1 ? "s" : ""}</p>
+          <p style={s.sub}>
+            {noPicksYet
+              ? "No sessions picked yet — showing the fixed conference schedule"
+              : `${totalSelected} session${totalSelected !== 1 ? "s" : ""} selected across ${daysWithPicks.length} day${daysWithPicks.length !== 1 ? "s" : ""}`}
+          </p>
         </div>
         <div style={s.actions}>
           <button style={{ ...s.actionBtn, background: "#2563eb" }} onClick={exportCSV}>⬇ Export CSV</button>
           <button style={{ ...s.actionBtn, background: "#1e293b" }} onClick={printAgenda}>🖨 Print</button>
-          <button style={{ ...s.actionBtn, background: "#dc2626" }} onClick={handleClearAll}>✕ Clear All</button>
+          {!noPicksYet && <button style={{ ...s.actionBtn, background: "#dc2626" }} onClick={handleClearAll}>✕ Clear All</button>}
         </div>
       </div>
+
+      {noPicksYet && (
+        <div className="no-print" style={s.nudgeBanner}>
+          <span style={{ fontSize: "16px" }}>💡</span>
+          <span>You haven't picked any sessions yet. <button style={s.nudgeLink} onClick={onNavigateToPlanner}>Go to the Agenda Planner</button> to choose what to attend in each time slot.</span>
+        </div>
+      )}
 
       {syncMsg && (
         <div className="no-print" style={{ fontSize: "11px", color: syncType==="ok"?"#166534":syncType==="err"?"#dc2626":"#64748b", marginBottom: "12px" }}>
@@ -97,8 +97,15 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
         const dayFixed = FIXED_EVENTS.filter(e => e.day === day);
         if (daySessions.length === 0 && dayFixed.length === 0) return null;
 
+        // Group selected sessions by time so 2-picks-per-slot render side by side
+        const sessionsByTime = {};
+        daySessions.forEach(s => {
+          if (!sessionsByTime[s.time]) sessionsByTime[s.time] = [];
+          sessionsByTime[s.time].push(s);
+        });
+
         const timeline = [
-          ...daySessions.map(s => ({ kind: "session", ...s })),
+          ...Object.entries(sessionsByTime).map(([time, group]) => ({ kind: "session-group", time, sessions: group })),
           ...dayFixed.map(e => ({ kind: "fixed", ...e })),
         ].sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
 
@@ -120,42 +127,56 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
                   </div>
                 );
               }
+
+              // session-group: 1 or 2 sessions sharing this time slot
+              const group = item.sessions;
+              const isPair = group.length > 1;
+
               return (
-                <div key={item.id} style={{ ...s.timelineRow, background: "#fff", border: "1px solid #e2e8f0", borderLeft: "4px solid #2563eb" }}>
-                  <div style={{ ...s.timelineTime, color: "#2563eb" }}>{item.time}</div>
-                  <div style={s.sessionContent}>
-                    <div style={s.sessionMeta}>
-                      <span style={s.sid}>{item.id}</span>
-                      <span style={s.trackTag}>{item.track}</span>
-                      {item.live && <span style={s.liveTag}>📡 Live</span>}
-                    </div>
-                    <div style={s.sessionTitle}>{item.title}</div>
-                    {item.sp.length > 0 && (
-                      <div style={s.speakerRow}>
-                        {item.sp.map(name => {
-                          const d = SPEAKERS[name] ?? {};
-                          return (
-                            <button
-                              key={name}
-                              className="no-print"
-                              style={s.speakerBtn}
-                              onClick={() => onBioClick?.(name)}
-                              title={d.role && d.co ? `${d.role}, ${d.co}` : ""}
-                            >
-                              {name}
-                            </button>
-                          );
-                        })}
-                        <span className="print-only" style={s.speakerPrintText}>
-                          {item.sp.join(", ")}
-                        </span>
+                <div key={item.time} style={{ display: "flex", gap: "14px", alignItems: "flex-start", marginBottom: "8px" }}>
+                  <div style={{ ...s.timelineTime, color: "#2563eb", paddingTop: "13px" }}>{item.time}</div>
+                  <div style={{ display: "flex", gap: "10px", flex: 1, flexDirection: isPair ? "row" : "column" }}>
+                    {group.map(sess => (
+                      <div key={sess.id} style={{
+                        ...s.sessionCard,
+                        flex: isPair ? 1 : "none",
+                        minWidth: 0,
+                        ...(isPair ? { padding: "10px 12px" } : {}),
+                      }}>
+                        <div style={s.sessionMeta}>
+                          <span style={s.sid}>{sess.id}</span>
+                          {!isPair && <span style={s.trackTag}>{sess.track}</span>}
+                          {sess.live && <span style={s.liveTag}>📡 Live</span>}
+                        </div>
+                        <div style={{ ...s.sessionTitle, ...(isPair ? { fontSize: "12px" } : {}) }}>{sess.title}</div>
+                        {sess.sp.length > 0 && (
+                          <div style={s.speakerRow}>
+                            {sess.sp.map(name => {
+                              const d = SPEAKERS[name] ?? {};
+                              return (
+                                <button
+                                  key={name}
+                                  className="no-print"
+                                  style={{ ...s.speakerBtn, ...(isPair ? { fontSize: "10.5px" } : {}) }}
+                                  onClick={() => onBioClick?.(name)}
+                                  title={d.role && d.co ? `${d.role}, ${d.co}` : ""}
+                                >
+                                  {name}
+                                </button>
+                              );
+                            })}
+                            <span className="print-only" style={s.speakerPrintText}>
+                              {sess.sp.join(", ")}
+                            </span>
+                          </div>
+                        )}
+                        {!isPair && sess.desc && sess.desc.length > 0 && (
+                          <ul style={s.descList}>
+                            {sess.desc.map((line, i) => <li key={i} style={s.descItem}>{line}</li>)}
+                          </ul>
+                        )}
                       </div>
-                    )}
-                    {item.desc && item.desc.length > 0 && (
-                      <ul style={s.descList}>
-                        {item.desc.map((line, i) => <li key={i} style={s.descItem}>{line}</li>)}
-                      </ul>
-                    )}
+                    ))}
                   </div>
                 </div>
               );
@@ -182,6 +203,8 @@ const s = {
   emptyTitle: { fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 8px" },
   emptySub:   { fontSize: "13px", color: "#64748b", lineHeight: "1.6", margin: "0 0 20px" },
   ctaBtn:     { background: "#2563eb", color: "#fff", border: "none", borderRadius: "8px", padding: "11px 22px", fontSize: "13px", fontWeight: "700", cursor: "pointer" },
+  nudgeBanner:{ display: "flex", alignItems: "center", gap: "10px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px", padding: "10px 16px", fontSize: "12px", color: "#1e40af", marginBottom: "20px" },
+  nudgeLink:  { background: "none", border: "none", padding: 0, color: "#2563eb", fontWeight: "700", textDecoration: "underline", cursor: "pointer", fontSize: "inherit" },
 
   daySection: { marginBottom: "28px" },
   dayHeader:  { fontSize: "15px", fontWeight: "800", color: "#0f172a", marginBottom: "10px", paddingBottom: "8px", borderBottom: "2px solid #2563eb" },
@@ -190,7 +213,7 @@ const s = {
   timelineTime: { fontSize: "11px", fontWeight: "800", minWidth: "120px", flexShrink: 0, paddingTop: "1px" },
   timelineContent: { fontSize: "13px", flex: 1 },
 
-  sessionContent: { flex: 1 },
+  sessionCard: { flex: 1, background: "#fff", border: "1px solid #e2e8f0", borderLeft: "4px solid #2563eb", borderRadius: "8px", padding: "12px 16px" },
   sessionMeta: { display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "5px" },
   sid: { background: "#eff6ff", color: "#2563eb", fontWeight: "700", fontSize: "10px", padding: "2px 7px", borderRadius: "4px", textTransform: "uppercase" },
   trackTag: { fontSize: "10px", fontWeight: "600", background: "#f1f5f9", color: "#475569", padding: "2px 7px", borderRadius: "4px", textTransform: "uppercase" },
