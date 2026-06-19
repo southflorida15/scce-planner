@@ -164,9 +164,16 @@ function SelectedSessionCard({ sess, onBioClick, onRemove, isMobile, compact }) 
   const [showDesc, setShowDesc] = useState(false);
   return (
     <div style={{
-      ...s.filledBody,
       flex: 1, minWidth: 0,
-      ...(isMobile ? { flexDirection: "column", gap: "8px" } : {}),
+      background: "#fff",
+      border: "1px solid #e2e8f0",
+      borderLeft: "4px solid #2563eb",
+      borderRadius: "8px",
+      padding: compact ? "12px 14px" : "14px 16px",
+      display: "flex",
+      flexDirection: isMobile ? "column" : "row",
+      gap: "8px",
+      boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
     }}>
       <div style={s.filledLeft}>
         <div style={s.filledMeta}>
@@ -234,8 +241,8 @@ function SlotRow({ slot, selectedIdsInSlot, onSelect, onDeselect, onBioClick, hi
       <div style={{
         ...s.slotCard,
         ...(isMobile ? { flexDirection: "column", gap: "8px", padding: "12px" } : {}),
-        borderLeft: isFilled ? "4px solid #2563eb" : "4px solid #cbd5e1",
-        background: isFilled ? "#f0f7ff" : hasOptions ? (open ? "#f1f5f9" : "#f8fafc") : "#f8fafc",
+        borderLeft: isFilled ? "4px solid #93c5fd" : "4px solid #cbd5e1",
+        background: isFilled ? "#f8fafc" : hasOptions ? (open ? "#f1f5f9" : "#f8fafc") : "#f8fafc",
       }}>
         {/* Time label */}
         <div style={{ ...s.slotTime, ...(isMobile ? { minWidth: "auto" } : {}) }}>{slot.time}</div>
@@ -247,7 +254,14 @@ function SlotRow({ slot, selectedIdsInSlot, onSelect, onDeselect, onBioClick, hi
             flexDirection: isMobile ? "column" : (selectedSessions.length > 1 ? "row" : "row"),
           }}>
             {selectedSessions.map(sess => (
-              <SelectedSessionCard key={sess.id} sess={sess} onBioClick={onBioClick} onRemove={() => onDeselect(sess.id)} isMobile={isMobile} compact={selectedSessions.length > 1} />
+              <SelectedSessionCard
+                key={sess.id}
+                sess={sess}
+                onBioClick={onBioClick}
+                onRemove={() => onDeselect(sess.id)}
+                isMobile={isMobile}
+                compact={selectedSessions.length > 1}
+              />
             ))}
             {!atMax && (
               <button style={s.addAnotherBtn} onClick={() => setOpen(true)}>
@@ -310,6 +324,15 @@ export default function PlannerTab({ agenda, jumpToSessionId, onJumpHandled }) {
   const [mobileAgendaOpen, setMobileAgendaOpen] = useState(false);
   const [bioName, setBioName]           = useState(null);
   const [activeDay, setActiveDay]       = useState("ALL");
+  const [collapsedDays, setCollapsedDays] = useState(new Set());
+
+  function toggleDayCollapse(day) {
+    setCollapsedDays(prev => {
+      const next = new Set(prev);
+      if (next.has(day)) next.delete(day); else next.add(day);
+      return next;
+    });
+  }
 
   // Jump to the day containing the target session when navigated from Speakers tab
   useEffect(() => {
@@ -479,24 +502,45 @@ export default function PlannerTab({ agenda, jumpToSessionId, onJumpHandled }) {
       <div style={{ ...s.content, ...(isMobile ? s.contentMobile : {}) }}>
         <div style={{ ...s.slotList, ...(isMobile ? { paddingRight: 0, paddingBottom: "76px" } : {}) }}>
 
+          {activeDay === "ALL" && (
+            <div style={s.collapseToolbar}>
+              <button style={s.collapseToolbarBtn} onClick={() => setCollapsedDays(new Set())}>
+                Expand all days
+              </button>
+              <button style={s.collapseToolbarBtn} onClick={() => setCollapsedDays(new Set(DAYS))}>
+                Collapse all days
+              </button>
+            </div>
+          )}
+
           {activeDay === "ALL" ? (
             // ── ALL DAYS VIEW ──
-            DAYS.map(day => (
-              <div key={day}>
-                <div style={s.allDayHdr}>{DAY_LABELS[day]}</div>
-                {getTimelineForDay(day, getSlotsToRender(day)).map(item => {
-                  if (item.kind === "fixed") {
-                    return <FixedEventRow key={item.id} event={item} compact={isMobile} />;
-                  }
-                  const selectedIdsInSlot = item.sessions.filter(s => selectedIds.has(s.id)).map(s => s.id);
-                  return (
-                    <SlotRow key={`${item.day}|${item.time}`} slot={item} selectedIdsInSlot={selectedIdsInSlot}
-                      onSelect={select} onDeselect={deselect} onBioClick={setBioName}
-                      highlightSessionId={jumpToSessionId} isMobile={isMobile} />
-                  );
-                })}
-              </div>
-            ))
+            DAYS.map(day => {
+              const isCollapsed = collapsedDays.has(day);
+              const daySlots = getSlotsForDay(day);
+              const filled = daySlots.filter(sl => sl.sessions.some(s => selectedIds.has(s.id))).length;
+              const total  = daySlots.filter(sl => sl.sessions.some(s => s.sp.length > 0)).length;
+              return (
+                <div key={day}>
+                  <button style={s.allDayHdrBtn} onClick={() => toggleDayCollapse(day)}>
+                    <span style={{ fontSize: "13px", color: "#94a3b8" }}>{isCollapsed ? "▶" : "▼"}</span>
+                    <span style={s.allDayHdrText}>{DAY_LABELS[day]}</span>
+                    <span style={s.allDayHdrCount}>{filled}/{total} picked</span>
+                  </button>
+                  {!isCollapsed && getTimelineForDay(day, getSlotsToRender(day)).map(item => {
+                    if (item.kind === "fixed") {
+                      return <FixedEventRow key={item.id} event={item} compact={isMobile} />;
+                    }
+                    const selectedIdsInSlot = item.sessions.filter(s => selectedIds.has(s.id)).map(s => s.id);
+                    return (
+                      <SlotRow key={`${item.day}|${item.time}`} slot={item} selectedIdsInSlot={selectedIdsInSlot}
+                        onSelect={select} onDeselect={deselect} onBioClick={setBioName}
+                        highlightSessionId={jumpToSessionId} isMobile={isMobile} />
+                    );
+                  })}
+                </div>
+              );
+            })
           ) : (
             // ── SINGLE DAY VIEW ──
             (() => {
@@ -636,6 +680,19 @@ const s = {
 
   // all days header
   allDayHdr: { fontSize:"15px", fontWeight:"800", color:"#0f172a", margin:"24px 0 10px", paddingBottom:"8px", borderBottom:"2px solid #2563eb" },
+  allDayHdrBtn: {
+    width: "100%", background: "none", border: "none", cursor: "pointer",
+    display: "flex", alignItems: "center", gap: "10px",
+    margin: "24px 0 10px", paddingBottom: "8px", borderBottom: "2px solid #2563eb",
+    textAlign: "left",
+  },
+  allDayHdrText: { fontSize: "15px", fontWeight: "800", color: "#0f172a" },
+  allDayHdrCount: { fontSize: "11px", fontWeight: "700", color: "#64748b", marginLeft: "auto" },
+  collapseToolbar: { display: "flex", gap: "8px", marginBottom: "12px" },
+  collapseToolbarBtn: {
+    background: "#fff", border: "1px solid #e2e8f0", borderRadius: "6px",
+    padding: "6px 12px", fontSize: "11px", fontWeight: "700", color: "#475569", cursor: "pointer",
+  },
 
   // slot card
   slotCard:  { background:"#fff", borderRadius:"8px", border:"1px solid #e2e8f0", padding:"14px 16px", display:"flex", alignItems:"flex-start", gap:"14px", cursor:"default" },
