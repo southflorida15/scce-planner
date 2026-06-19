@@ -36,6 +36,41 @@ export default function App() {
 
   return (
     <div style={{ fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", minHeight: "100vh", background: "#f8fafc" }}>
+      {/* Title + UID bar */}
+      <div className="no-print" style={{
+        background: "#0f172a", color: "#fff",
+        padding: isMobile ? "10px 14px" : "14px 28px",
+        display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px",
+      }}>
+        <div>
+          <h1 style={{ margin: 0, fontSize: isMobile ? "16px" : "18px", fontWeight: "800", letterSpacing: "-0.5px" }}>
+            SCCE CEI 2026
+          </h1>
+          {!isMobile && (
+            <p style={{ margin: "2px 0 0", fontSize: "11px", color: "#64748b" }}>
+              25th Annual Compliance &amp; Ethics Institute · Rosen Shingle Creek, Orlando FL
+            </p>
+          )}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: isMobile ? "10px" : "11px" }}>
+          {!isMobile && <span style={{ color: "#64748b" }}>Your ID </span>}
+          <span style={{ fontFamily: "monospace", color: "#94a3b8" }}>
+            {agenda.UID.slice(0, isMobile ? 8 : 14)}…
+          </span>
+          <button
+            style={{ background: "#1e293b", color: "#94a3b8", border: "none", borderRadius: "3px", padding: "2px 8px", fontSize: "10px", cursor: "pointer" }}
+            onClick={agenda.copyUID}
+          >
+            Copy
+          </button>
+          {agenda.syncMsg && !isMobile && (
+            <span style={{ marginLeft: "10px", fontSize: "11px", color: agenda.syncType === "ok" ? "#86efac" : agenda.syncType === "err" ? "#fca5a5" : "#94a3b8" }}>
+              {agenda.syncMsg}
+            </span>
+          )}
+        </div>
+      </div>
+
       {/* Top nav */}
       <div className="no-print" style={{ background: "#0f172a", padding: isMobile ? "0 10px" : "0 28px", display: "flex", gap: "2px", borderBottom: "1px solid #1e293b", overflowX: "auto" }}>
         {TABS.map(tab => (

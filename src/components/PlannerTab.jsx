@@ -313,7 +313,7 @@ function SlotRow({ slot, selectedIdsInSlot, onSelect, onDeselect, onBioClick, hi
 }
 
 export default function PlannerTab({ agenda, jumpToSessionId, onJumpHandled }) {
-  const { UID, selectedIds, select, deselect, clearAll: clearAllShared, syncMsg, syncType, copyUID } = agenda;
+  const { selectedIds, select, deselect, clearAll: clearAllShared } = agenda;
 
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 860);
   useEffect(() => {
@@ -405,20 +405,6 @@ export default function PlannerTab({ agenda, jumpToSessionId, onJumpHandled }) {
 
   return (
     <div style={s.root}>
-
-      {/* ── TOP BAR ── */}
-      <div style={{ ...s.topBar, ...(isMobile ? s.topBarMobile : {}) }}>
-        <div>
-          <h1 style={{ ...s.h1, ...(isMobile ? { fontSize: "16px" } : {}) }}>SCCE CEI 2026</h1>
-          {!isMobile && <p style={s.sub}>25th Annual Compliance &amp; Ethics Institute · Rosen Shingle Creek, Orlando FL</p>}
-        </div>
-        <div style={{ ...s.uidBox, ...(isMobile ? { fontSize: "10px" } : {}) }}>
-          {!isMobile && <span style={s.uidLabel}>Your ID </span>}
-          <span style={s.uidVal}>{UID.slice(0, isMobile ? 8 : 14)}…</span>
-          <button style={s.uidCopy} onClick={copyUID}>Copy</button>
-          {syncMsg && !isMobile && <span style={{ marginLeft: "10px", fontSize: "11px", color: syncType==="ok"?"#86efac":syncType==="err"?"#fca5a5":"#94a3b8" }}>{syncMsg}</span>}
-        </div>
-      </div>
 
       {/* ── DAY TABS ── */}
       <div style={{ ...s.tabsBar, ...(isMobile ? s.tabsBarMobile : {}) }}>

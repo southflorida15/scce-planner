@@ -193,11 +193,11 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
           />
           Show only my elective sessions
         </label>
-        <span style={s.electiveHint}>
-          {electiveOnly
-            ? "Hiding meals, breaks, and general sessions shared by all attendees"
-            : "Includes meals, breaks, and general sessions everyone attends"}
-        </span>
+        {electiveOnly && (
+          <span style={s.electiveHint}>
+            Hiding meals, breaks, and general sessions shared by all attendees
+          </span>
+        )}
       </div>
 
       {noPicksYet && (
@@ -235,19 +235,16 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
           ...dayFixed.map(e => ({ kind: "fixed", ...e })),
         ];
 
-        // In elective-only mode, also show empty placeholders for slots with
-        // electives available but nothing picked yet — mirrors the Planner's
-        // grey "no selection" state.
-        if (electiveOnly) {
-          const allElectiveTimes = [...new Set(
-            SESSIONS.filter(sess => sess.day === day && sess.sp.length > 0).map(sess => sess.time)
-          )];
-          allElectiveTimes.forEach(time => {
-            if (!sessionsByTime[time]) {
-              timeline.push({ kind: "empty-slot", time });
-            }
-          });
-        }
+        // Always show empty placeholders for elective slots with nothing picked
+        // yet — mirrors the Planner's grey "no selection" state.
+        const allElectiveTimes = [...new Set(
+          SESSIONS.filter(sess => sess.day === day && sess.sp.length > 0).map(sess => sess.time)
+        )];
+        allElectiveTimes.forEach(time => {
+          if (!sessionsByTime[time]) {
+            timeline.push({ kind: "empty-slot", time });
+          }
+        });
 
         timeline.sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
 
