@@ -75,10 +75,12 @@ function SessionOption({ session, onSelect, onBioClick }) {
             const d = SPEAKERS[name] ?? {};
             return (
               <div key={name} style={s.spChip}>
-                <button style={s.spChipName} onClick={() => onBioClick(name)}>{name}</button>
-                <span style={{ fontSize: "10px", color: d.v ? "#64748b" : "#b45309" }}>
-                  {d.co || "TBD"}{!d.v && " ⚠"}
-                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <button style={s.spChipName} onClick={() => onBioClick(name)}>{name}</button>
+                  <div style={{ fontSize: "10px", color: d.v ? "#475569" : "#b45309", lineHeight: "1.3" }}>
+                    {d.role && d.role !== "TBD" ? `${d.role}, ` : ""}{d.co || "TBD"}{!d.v && " ⚠"}
+                  </div>
+                </div>
                 {d.li && (
                   <a href={d.li} target="_blank" rel="noopener noreferrer" style={s.liBtn} title="LinkedIn">
                     <span style={s.liIcon}><LinkedInIcon /></span>

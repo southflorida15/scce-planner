@@ -136,6 +136,7 @@ export default function SpeakersTab({ onSessionClick }) {
   const [filterIndustry, setFilterIndustry] = useState("ALL");
   const [filterVerified, setFilterVerified] = useState("ALL");
   const [filterConnected, setFilterConnected] = useState("ALL");
+  const [filterMultiSession, setFilterMultiSession] = useState(false);
   const [filterLocation, setFilterLocation] = useState("");
   const [sortBy, setSortBy]               = useState("name");
   const [bioOpen, setBioOpen]             = useState(null);
@@ -181,6 +182,7 @@ export default function SpeakersTab({ onSessionClick }) {
         if (filterVerified === "no"  &&  sp.v) return false;
         if (filterConnected === "yes" && sp.isConnected !== true)  return false;
         if (filterConnected === "no"  && sp.isConnected !== false) return false;
+        if (filterMultiSession && sp.sessions.length <= 1) return false;
         if (filterLocation && !(sp.location||"").toLowerCase().includes(filterLocation.toLowerCase())) return false;
         return true;
       })
@@ -191,7 +193,7 @@ export default function SpeakersTab({ onSessionClick }) {
         if (sortBy === "sessions")return b.sessions.length - a.sessions.length;
         return 0;
       });
-  }, [allSpeakers, searchText, filterIndustry, filterVerified, filterConnected, filterLocation, sortBy]);
+  }, [allSpeakers, searchText, filterIndustry, filterVerified, filterConnected, filterMultiSession, filterLocation, sortBy]);
 
   const connectedCount  = connections ? allSpeakers.filter(s => s.isConnected).length : 0;
   const verifiedCount   = allSpeakers.filter(s => s.v).length;
@@ -207,13 +209,33 @@ export default function SpeakersTab({ onSessionClick }) {
           <p style={s.sub}>All {allSpeakers.length} confirmed speakers · SCCE CEI 2026</p>
         </div>
         <div style={s.statsRow}>
-          <div style={s.stat}><span style={s.statN}>{verifiedCount}</span><span style={s.statL}>Verified</span></div>
-          <div style={s.stat}><span style={s.statN}>{allSpeakers.length - verifiedCount}</span><span style={s.statL}>Pending</span></div>
-          <div style={s.stat}><span style={s.statN}>{multiCount}</span><span style={s.statL}>Multi-Session</span></div>
-          {connections && <div style={{ ...s.stat, background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
-            <span style={{ ...s.statN, color: "#166534" }}>{connectedCount}</span>
-            <span style={s.statL}>Connected</span>
-          </div>}
+          <button
+            style={{ ...s.stat, ...(filterVerified === "yes" ? s.statActive : {}) }}
+            onClick={() => setFilterVerified(filterVerified === "yes" ? "ALL" : "yes")}
+          >
+            <span style={s.statN}>{verifiedCount}</span><span style={s.statL}>Verified</span>
+          </button>
+          <button
+            style={{ ...s.stat, ...(filterVerified === "no" ? s.statActive : {}) }}
+            onClick={() => setFilterVerified(filterVerified === "no" ? "ALL" : "no")}
+          >
+            <span style={s.statN}>{allSpeakers.length - verifiedCount}</span><span style={s.statL}>Pending</span>
+          </button>
+          <button
+            style={{ ...s.stat, ...(filterMultiSession ? s.statActive : {}) }}
+            onClick={() => setFilterMultiSession(v => !v)}
+          >
+            <span style={s.statN}>{multiCount}</span><span style={s.statL}>Multi-Session</span>
+          </button>
+          {connections && (
+            <button
+              style={{ ...s.stat, background: "#f0fdf4", border: "1px solid #bbf7d0", ...(filterConnected === "yes" ? { boxShadow: "0 0 0 2px rgba(22,163,74,0.2)" } : {}) }}
+              onClick={() => setFilterConnected(filterConnected === "yes" ? "ALL" : "yes")}
+            >
+              <span style={{ ...s.statN, color: "#166534" }}>{connectedCount}</span>
+              <span style={s.statL}>Connected</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -341,7 +363,7 @@ export default function SpeakersTab({ onSessionClick }) {
                   onClick={() => onSessionClick?.(id)}
                   title={`View ${id} in the agenda planner`}
                 >
-                  {id} ↗
+                  {id}
                 </button>
               ))}
             </div>
@@ -430,7 +452,8 @@ const s = {
   h2:             { margin: "0 0 4px", fontSize: "20px", fontWeight: "800", color: "#0f172a" },
   sub:            { margin: 0, fontSize: "12px", color: "#64748b" },
   statsRow:       { display: "flex", gap: "10px", flexWrap: "wrap" },
-  stat:           { background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "10px 16px", textAlign: "center", minWidth: "80px" },
+  stat:           { background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "10px 16px", textAlign: "center", minWidth: "80px", cursor: "pointer", transition: "all .15s" },
+  statActive:     { background: "#eff6ff", border: "1px solid #93c5fd", boxShadow: "0 0 0 2px rgba(37,99,235,0.15)" },
   statN:          { display: "block", fontSize: "18px", fontWeight: "800", color: "#2563eb", lineHeight: 1 },
   statL:          { display: "block", fontSize: "10px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", marginTop: "3px" },
 
