@@ -130,7 +130,7 @@ export const SPEAKERS = {
   },
   "Alexa Stone": {
     co: "Crowe LLP", role: "ERM Consulting Senior Manager", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/alexarstone/",
     bio: `Alexa Stone works in Enterprise Risk Management at Crowe, supporting financial services organizations with designing and implementing ERM frameworks, Risk Appetite statements, and RCSA programs. Her work focuses on making ERM practical so leaders can prioritize effort and make risk-informed decisions.`,
   },
   "Stefany Samp": {
@@ -210,42 +210,42 @@ export const SPEAKERS = {
   },
   "Joseph Pugh": {
     co: "AARP", role: "Senior Director, Enterprise Risk Management & Compliance", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/joepugh1/",
     bio: `Joe Pugh built and leads AARP's ERM program, delivering risk reporting to executive management and the Board of Directors. Founding member of the DC ERM Roundtable. Played a key role in AARP being named one of the World's Most Ethical Companies for three consecutive years. CCEP, CFE, RIMS-CRMP, CRMA, CDPSE. MBA from Marymount University.`,
   },
   "Stephanie Kandel": {
     co: "AARP", role: "Sr. Compliance & Ethics Director", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/stephaniekandel/",
     bio: `Stephanie Kandel is Sr. Compliance & Ethics Director for AARP Services Inc., overseeing corporate compliance and risk management. Previously Compliance Manager at Ahold USA's Giant Food Stores for 10 years. Guest lecturer at Georgetown and Loyola University Maryland. MBA from Loyola University; B.A. in Economics from Columbia University. CCEP.`,
   },
   "Nick Gallo": {
     co: "Ethico", role: "Chief Servant, Co-CEO", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/ngallo/",
     bio: `Nick Gallo is Chief Servant and Co-CEO of Ethico, providing compliance solutions to large global organizations. He hosts The Ethicsverse, a weekly webinar series with leading ethics and compliance thought leaders. Regular speaker on Ethical ROI, Speak Up Cultures, and Activating Middle Managers. CPA; member of Mensa International. B.S. in Finance, Accounting, and Economics from Indiana University.`,
   },
   "Kasturi Venkatesh": {
     co: "Lucid Motors", role: "Staff Program Manager, Ethics and Compliance", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/kasturi-venkatesh-ccep-i-b5878322/",
     bio: `Kasturi Venkatesh has worked in compliance across immigration, technology, and civil engineering industries, specializing in conflicts of interest, third-party risk management, and developing compliance programs. Holds three degrees in law including a Master of Laws from UC Berkeley School of Law. Speaks four languages.`,
   },
   "Laurence Hamel": {
     co: "WSP", role: "Principal Program Manager / Ethics & Compliance Senior Advisor", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/laurence-hamel/?locale=en",
     bio: `Laurence Hamel is a registered lawyer and Senior Ethics and Compliance Advisor at WSP Global Inc. Recognized as Montreal's 2024 Young Professional of the Year. Teaches a university-level ethics course for engineering students and writes for Ethikos magazine. Expertise includes conflict of interest programs, anti-corruption, internal investigations, and governance frameworks. Postgraduate degree in Applied Ethics; Lean Six Sigma Belt certifications.`,
   },
   "Kasey Ingram": {
     co: "ISK Americas Incorporated", role: "SVP - Compliance, Corporate Secretary and General Counsel", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/kaseyingram/",
     bio: `Kasey Ingram is an attorney and CCEP serving as SVP - Compliance, Corporate Secretary and General Counsel for ISK Americas Incorporated (multi-national chemical and manufacturing company). Also President of ISK Animal Health, LLC and ISK Life Sciences, LLC. Graduate of the U.S. Naval Academy; served as a nuclear submarine officer. JD from the University of Cincinnati.`,
   },
   "Rebecca Walker": {
     co: "Kaplan & Walker LLP", role: "Partner", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/rebecca-walker-kwllp/",
     bio: `Rebecca Walker is a partner at Kaplan & Walker LLP, practicing exclusively in compliance law for over 25 years. She has helped hundreds of companies design compliance programs and served as a monitor for the Department of the Air Force and as an independent consultant for the SEC and World Bank. Chairs PLI's Compliance and Ethics Essentials Institute. Author of Conflicts of Interest in Business and the Professions (Thomson Reuters West). J.D. from Harvard Law School.`,
   },
   "Majid Charania": {
     co: "Competition Bureau of Canada", role: "Director of Compliance", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/majidcharania/",
     bio: `Majid Charania is Director of Compliance at the Competition Bureau of Canada, promoting compliance with Canadian competition laws. He lectured competition law at Toronto Metropolitan University, served as special advisor to the Commissioner of Competition, and completed a mission at the European Commission's Directorate-General for Competition in Brussels. JD from the University of Ottawa; BBA from the Schulich School of Business at York University. CCEP-I.`,
   },
   "Shalini Rajoo": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/shalinirajoo/", bio: "" },
@@ -253,42 +253,42 @@ export const SPEAKERS = {
   "Marnae Collins": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
   "Patricia Marinho": {
     co: "TBD", role: "Chief Compliance Officer", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/patricia-marinho-ll-m-crcp-2b283810/",
     bio: `Patricia Marinho is a seasoned leader with over 25 years of experience in legal, regulatory, and compliance matters, with a primary focus on the U.S. and Latin American regions. Her expertise in the Money Services Business (MSB) sector includes AML and Bank Secrecy Act compliance, monitoring client transactions, managing customer onboarding, and deploying Money Transmitter licenses. She is a faculty member at the AMLFC Institute of St. Thomas University, fluent in four languages, and has served as co-leader of the Office of the General Counsel Inclusion and Diversity Committee.`,
   },
   "Travis Waugh": {
     co: "Georgia Institute of Technology", role: "Instructional Technologist, Human Resources", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/travis-waugh-83768851/",
     bio: ``,
   },
   "Renata Muzzi": {
     co: "TozziniFreire Advogados", role: "Partner", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/renatamuzzi/",
     bio: `Renata Muzzi is a partner in TozziniFreire's Compliance & Investigation practice group with expertise in internal investigations, anti-corruption counseling, and compliance program design. She was the first Brazilian to obtain the CCEP certification from SCCE, in 2008. Graduate of PUC-SP Law School; specialized degrees in Corporate Law from PUC-SP and Business Management from Business School São Paulo. Recommended by Chambers Global, Chambers Latin America, Latin Lawyer 250, The Legal 500, and Who's Who Legal. Named among the 100 remarkable female lawyers in investigations worldwide by Global Investigations Review 2021.`,
   },
   "Shin Jae Kim": {
     co: "TozziniFreire Advogados", role: "Partner", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/shinjaekim/",
     bio: `Shin Jae Kim is Head of TozziniFreire's Compliance & Investigation practice group and a pioneer in the Compliance field in Brazil with 30+ years of experience in corporate law, M&A, and anti-corruption. She also heads the Asia Practice Group and co-headed the creation of the Latin American Compliance & Investigation League (LACIL). Member of the SCCE/HCCA Finance, Compliance, and Audit Committee; co-leader of the Brazil Chapter of WWCDA. CCEP-I. Recommended by Chambers Global, Chambers Brazil, The Legal 500, and Who's Who Legal. Named among the 100 world's leading women in investigations by Global Investigations Review 2018. Awarded the International Compliance Professional award from SCCE in 2007.`,
   },
   "Bruce Bruski": {
     co: "T-Mobile", role: "Sr. Program Manager, Ethics & Compliance", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/bruce-b-15ba646/",
     bio: `Bruce Bruski brings over 20 years of hands-on manufacturing experience and a decade of enterprise corporate compliance leadership. He has worked within corporate-owned and third-party manufacturing plants globally, with experience at Starbucks and Amazon. At T-Mobile, he leads a team applying lean six sigma and classic quality tools (5 Whys, fishbone diagrams, basic statistics) to cooperatively improve business processes and systems following threshold-risk events.`,
   },
   "James Tillen": {
     co: "Miller & Chevalier Chartered", role: "Practice Co-Lead, FCPA & International Anti-Corruption", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/jamestillen/",
     bio: `James Tillen's practice focuses on cross-border investigations and compliance matters involving corruption, fraud, money laundering, cartels, foreign terrorist organizations, and business and human rights. He works with U.S. and non-U.S. clients on compliance program design, transactional counseling, internal investigations, DOJ and SEC enforcement actions, and FCPA monitorships. He has conducted M&A and third-party due diligence reviews and delivered compliance training for client operations worldwide.`,
   },
   "Kathryn Nickerson": {
     co: "U.S. Department of Commerce", role: "Former Assistant Chief Counsel, International Commerce", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/kathryn-nickerson/",
     bio: `Kathryn Nickerson is an international trade attorney and former Assistant Chief Counsel in the Office of the Chief Counsel for International Commerce at the U.S. Department of Commerce. As the Department's lead counsel on international anticorruption, she advised on the FCPA, contributed to the Resource Guide to the U.S. FCPA (DOJ/SEC), and helped negotiate anticorruption provisions in IPEF, USMCA, and the 2021 OECD Revised Antibribery Recommendation. She served on U.S. delegations to the OECD and UN during negotiations on landmark anticorruption conventions. Lecturer at Georgetown University Law Center, American University, and University of Michigan Law School. J.D. from the University of Virginia.`,
   },
   "Frank Ruelas": {
     co: "CommonSpirit Health", role: "Corporate Responsibility Officer", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/frank-ruelas-350266b/",
     bio: `Frank Ruelas is a compliance professional at CommonSpirit Health with experience across acute hospitals, critical access hospitals, physician-based providers, and managed care. He is actively involved in helping compliance professionals prepare for certification exams and has become heavily involved in applying Artificial Intelligence to data analysis, policy development, training and education, and auditing and monitoring within compliance programs.`,
   },
   "Britni Jennings": {
@@ -303,47 +303,47 @@ export const SPEAKERS = {
   },
   "Helen Eisner": {
     co: "Lucid Motors", role: "Managing Counsel, Ethics & Compliance", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/helen-eisner-3311bb21/",
     bio: ``,
   },
   "Jeffrey Brown": {
     co: "Activision Blizzard", role: "Sr. VP, Corporate Secretary & Chief Compliance Officer", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/jeffrey-brown-9ba32531/",
     bio: ``,
   },
   "Caleb Janski": {
     co: "Signature Healthcare", role: "AI Ethics Officer, Director of Compliance", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/caleb-janski-mspm-aip-hc-84200a25a/",
     bio: `Caleb Janski is the Director of Healthcare Compliance for Signature Healthcare and the company's AI Ethics Officer, leading the development of Signature's AI Governance Program. He has built AI-powered compliance tools including an Open Payments audit solution, AI-driven training modules, a GPT-based policy analyzer, and a virtual policy assistant in Microsoft Teams. M.S. in Project Management from the University of Southern California; pursuing a Graduate Certificate in AI Strategy from Cornell University.`,
   },
   "Ian Moolman": {
     co: "Emirates Global Aluminum", role: "Ethics & Business Integrity Leader", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/ianmoolman/",
     bio: `Ian Moolman is an Ethics & Business Integrity leader with 23+ years of international experience, including 9 years at Glencore International. At Emirates Global Aluminium (EGA, Fortune 500), he holds a group-level remit spanning financial crime, sanctions, anti-corruption, third-party due diligence, and ESG across operations in the UAE, Guinea, Germany, and the USA. His work centers on algorithmic and data governance — building AI-enabled compliance programs that function as value creation. MBA; Master's in Supply Chain Management; CCEP-I, FICA, CFE, and CAMS. Regular international speaker and published author.`,
   },
   "Kelly Willenberg": {
     co: "Kelly Willenberg and Associates", role: "CEO", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/kelly-willenberg-04418a6/",
     bio: `Kelly Willenberg & Associates has over 17 years of experience in clinical research and healthcare compliance. Dr. Willenberg serves as faculty on HCCA/SCCE Academies and is a board member of the Healthcare Compliance Association and SCCE. She was appointed by the Governor to South Carolina's Small Business Regulatory Review Committee. An accomplished author, podcaster, and national speaker; graduate of The Campaign School at Yale. She established the Dale A. Willenberg Congenital Heart Disease Endowment Fund in memory of her husband.`,
   },
   "Alphons Iacobelli": {
     co: "Independent", role: "Compliance Consultant / Former Senior Executive", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/alphonsiacobelli/",
     bio: `Alphons (Al) Iacobelli is a former senior executive with extensive experience in human resources, industrial relations, finance, healthcare, and organizational restructuring. He served as chief company bargaining officer for Chrysler Group during its 2009 bankruptcy and led the Voluntary Employee Benefit Association (Healthcare-VEBA) restructuring. Following a federal indictment that exposed ethical challenges within the automotive industry, he pursued doctoral studies examining systemic failures, unethical leadership, and organizational climate. He serves as a compliance consultant, guest speaker, and member of the Harvard Business Review Advisory Council.`,
   },
   "James Jefferis": {
     co: "Wawa, Inc.", role: "Compliance Manager", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/jim-jefferis1/",
     bio: `Jim Jefferis is the Compliance Manager for Wawa, Inc., responsible for developing and maintaining the organization's Corporate Compliance Program. Previously spent over 16 years at IKEA North America building a risk-based, enterprise-wide corporate compliance program. Specializes in Internal Control Frameworks with 10+ years developing and auditing internal controls, and builds compliance training on ABC and Conflicts of Interest. CCEP and Certified Internal Auditor (CIA). B.S. in Business Management from Utah Valley University.`,
   },
   "Michelle Ackerman": {
     co: "IKEA", role: "Senior Risk & Compliance Manager", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/mackerman-ccep/",
     bio: `Michelle Ackerman is a Senior Risk & Compliance Manager at IKEA North America Services with 25+ years of retail experience and 15+ years building and maturing compliance programs. She designed a Third-Party Risk & Compliance Governance framework that introduced C-suite oversight of Code of Conduct adherence, driving a 70% improvement in compliance performance. She currently leads the social auditing and third-party compliance team, ensuring vendor compliance with ethical, labor, and sustainability standards across global value chains. CCEP, LPEC.`,
   },
   "Jonathan Armstrong": {
     co: "Punter Southall Law", role: "Partner", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/jparmstrong/",
     bio: `Jonathan Armstrong is an experienced compliance and technology lawyer at Punter Southall in London and a Professor at Fordham Law teaching international compliance. He has handled legal matters in 60+ countries involving cybersecurity, ransomware, investigations, bribery and corruption, corporate governance, and global privacy. Regular SCCE speaker and contributor to the SCCE Manual. Co-author of the LexisNexis definitive work on technology risk, Managing Risk: Technology and Communications. Frequent BBC broadcaster. LinkedIn: https://www.linkedin.com/in/jparmstrong/`,
   },
   "Kortney Nordrum": {
@@ -378,7 +378,7 @@ export const SPEAKERS = {
   },
   "Emily Frank": {
     co: "TBD", role: "Program Coordinator, Ethics and Compliance", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/emily-frank-msl-ccep/",
     bio: ``,
   },
   "Rebecca Anker": {
