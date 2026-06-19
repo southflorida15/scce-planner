@@ -64,6 +64,11 @@ function SessionOption({ session, onSelect, onBioClick }) {
         <button style={s.selectBtn} onClick={() => onSelect(id)}>Select →</button>
       </div>
       <div style={s.optionTitle}>{title}</div>
+      {session.desc && session.desc.length > 0 && (
+        <ul style={s.descList}>
+          {session.desc.map((line, i) => <li key={i} style={s.descItem}>{line}</li>)}
+        </ul>
+      )}
       {sp.length > 0 && (
         <div style={s.spChips}>
           {sp.map(name => {
@@ -88,15 +93,29 @@ function SessionOption({ session, onSelect, onBioClick }) {
   );
 }
 
-function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick }) {
+function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlightSessionId }) {
   const [open, setOpen] = useState(false);
+  const rowRef = useRef(null);
   const selectedSession = selectedId ? slot.sessions.find(s => s.id === selectedId) : null;
   const isFilled = !!selectedSession;
   const hasSessions = slot.sessions.length > 0;
   const hasOptions = slot.sessions.some(s => s.sp.length > 0); // skip TBD-only slots
+  const containsHighlight = highlightSessionId && slot.sessions.some(s => s.id === highlightSessionId);
+
+  useEffect(() => {
+    if (containsHighlight) {
+      if (!isFilled) setOpen(true);
+      setTimeout(() => {
+        rowRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
+  }, [containsHighlight]);
 
   return (
-    <div style={{ marginBottom: "8px" }}>
+    <div ref={rowRef} style={{
+      marginBottom: "8px",
+      ...(containsHighlight ? { outline: "2px solid #f59e0b", borderRadius: "10px" } : {}),
+    }}>
       {/* ── SLOT CARD ── */}
       <div style={{
         ...s.slotCard,
@@ -121,6 +140,18 @@ function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick }) {
                   <button key={name} style={s.filledSpName} onClick={() => onBioClick(name)}>{name}</button>
                 ))}
               </div>
+              {selectedSession.desc && selectedSession.desc.length > 0 && (
+                <>
+                  <button style={s.detailsToggle} onClick={() => setOpen(v => !v)}>
+                    {open ? "Hide details ▲" : "Show details ▼"}
+                  </button>
+                  {open && (
+                    <ul style={s.descList}>
+                      {selectedSession.desc.map((line, i) => <li key={i} style={s.descItem}>{line}</li>)}
+                    </ul>
+                  )}
+                </>
+              )}
             </div>
             <div style={s.filledActions}>
               <button style={s.swapBtn} onClick={() => { onDeselect(selectedId); setOpen(true); }}>
@@ -169,12 +200,22 @@ function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick }) {
   );
 }
 
-export default function PlannerTab() {
+export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
   const [selectedIds, setSelectedIds]   = useState(new Set());
   const [bioName, setBioName]           = useState(null);
   const [syncMsg, setSyncMsg]           = useState("");
   const [syncType, setSyncType]         = useState("");
   const [activeDay, setActiveDay]       = useState("ALL");
+
+  // Jump to the day containing the target session when navigated from Speakers tab
+  useEffect(() => {
+    if (jumpToSessionId) {
+      const target = SESSIONS.find(s => s.id === jumpToSessionId);
+      if (target) setActiveDay(target.day);
+      const timer = setTimeout(() => onJumpHandled?.(), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [jumpToSessionId]);
   const [showFilters, setShowFilters]   = useState(true);
   const [filterText, setFilterText]     = useState("");
   const [filterSpeaker, setFilterSpeaker] = useState("ALL");
@@ -413,7 +454,8 @@ export default function PlannerTab() {
                   const selectedId = slot.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
                   return (
                     <SlotRow key={`${slot.day}|${slot.time}`} slot={slot} selectedId={selectedId}
-                      onSelect={select} onDeselect={deselect} onBioClick={setBioName} />
+                      onSelect={select} onDeselect={deselect} onBioClick={setBioName}
+                      highlightSessionId={jumpToSessionId} />
                   );
                 })}
               </div>
@@ -426,7 +468,8 @@ export default function PlannerTab() {
                   const selectedId = slot.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
                   return (
                     <SlotRow key={`${slot.day}|${slot.time}`} slot={slot} selectedId={selectedId}
-                      onSelect={select} onDeselect={deselect} onBioClick={setBioName} />
+                      onSelect={select} onDeselect={deselect} onBioClick={setBioName}
+                      highlightSessionId={jumpToSessionId} />
                   );
                 })
           )}
@@ -532,6 +575,9 @@ const s = {
   spChipName:   { background:"none", border:"none", padding:0, fontSize:"12px", fontWeight:"700", color:"#2563eb", textDecoration:"underline", cursor:"pointer" },
   liBtn:        { display:"inline-flex", alignItems:"center", marginLeft:"auto" },
   liIcon:       { background:"#0077b5", color:"#fff", borderRadius:"3px", width:"18px", height:"18px", display:"inline-flex", alignItems:"center", justifyContent:"center" },
+  descList:     { margin:"8px 0 10px", paddingLeft:"18px", display:"flex", flexDirection:"column", gap:"4px" },
+  descItem:     { fontSize:"11.5px", color:"#475569", lineHeight:"1.45" },
+  detailsToggle:{ background:"none", border:"none", color:"#2563eb", fontSize:"11px", fontWeight:"600", cursor:"pointer", padding:"4px 0", textAlign:"left" },
 
   // shared tags
   sid:      { background:"#eff6ff", color:"#2563eb", fontWeight:"700", fontSize:"10px", padding:"2px 7px", borderRadius:"4px", textTransform:"uppercase" },

@@ -129,7 +129,7 @@ function parseLinkedInCSV(text) {
   return connections;
 }
 
-export default function SpeakersTab() {
+export default function SpeakersTab({ onSessionClick }) {
   const [connections, setConnections]     = useState(null); // Set of lowercase names
   const [csvError, setCsvError]           = useState("");
   const [searchText, setSearchText]       = useState("");
@@ -335,7 +335,14 @@ export default function SpeakersTab() {
             {/* Sessions */}
             <div style={s.sessionPills}>
               {sp.sessions.map(id => (
-                <span key={id} style={s.sessionPill}>{id}</span>
+                <button
+                  key={id}
+                  style={{ ...s.sessionPill, cursor: "pointer", border: "none" }}
+                  onClick={() => onSessionClick?.(id)}
+                  title={`View ${id} in the agenda planner`}
+                >
+                  {id} ↗
+                </button>
               ))}
             </div>
 
@@ -378,7 +385,19 @@ export default function SpeakersTab() {
                   <span style={s.modalChip}>🏢 {meta.industry}</span>
                 )}
                 {sessions.length > 0 && (
-                  <span style={s.modalChip}>🎤 Sessions: {sessions.join(", ")}</span>
+                  <span style={s.modalChip}>
+                    🎤 Sessions: {sessions.map((id, i) => (
+                      <span key={id}>
+                        {i > 0 && ", "}
+                        <button
+                          style={{ background: "none", border: "none", padding: 0, color: "#2563eb", fontWeight: "700", cursor: "pointer", fontSize: "inherit", textDecoration: "underline" }}
+                          onClick={() => { setBioOpen(null); onSessionClick?.(id); }}
+                        >
+                          {id}
+                        </button>
+                      </span>
+                    ))}
+                  </span>
                 )}
               </div>
               <a

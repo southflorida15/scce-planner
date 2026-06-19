@@ -9,6 +9,12 @@ const TABS = [
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("planner");
+  const [jumpToSessionId, setJumpToSessionId] = useState(null); // session ID to scroll to in Planner
+
+  function goToSession(sessionId) {
+    setJumpToSessionId(sessionId);
+    setActiveTab("planner");
+  }
 
   return (
     <div style={{ fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", minHeight: "100vh", background: "#f8fafc" }}>
@@ -32,8 +38,8 @@ export default function App() {
       </div>
 
       {/* Content */}
-      {activeTab === "planner"  && <PlannerTab />}
-      {activeTab === "speakers" && <SpeakersTab />}
+      {activeTab === "planner"  && <PlannerTab jumpToSessionId={jumpToSessionId} onJumpHandled={() => setJumpToSessionId(null)} />}
+      {activeTab === "speakers" && <SpeakersTab onSessionClick={goToSession} />}
     </div>
   );
 }
