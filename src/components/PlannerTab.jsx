@@ -1,12 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SESSIONS, FIXED_EVENTS, TRACKS, DAY_ORDER, DAY_LABELS, SPEAKERS } from "../data/sessions";
 import BioModal from "./BioModal";
-
-function getOrCreateUID() {
-  let uid = localStorage.getItem("scce_uid");
-  if (!uid) { uid = crypto.randomUUID(); localStorage.setItem("scce_uid", uid); }
-  return uid;
-}
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday"];
 const DAY_SUBTITLES = {
@@ -258,7 +252,9 @@ function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlight
   );
 }
 
-export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
+export default function PlannerTab({ agenda, jumpToSessionId, onJumpHandled }) {
+  const { UID, selectedIds, select, deselect, clearAll: clearAllShared, syncMsg, syncType, copyUID } = agenda;
+
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 860);
   useEffect(() => {
     function onResize() { setIsMobile(window.innerWidth < 860); }
@@ -266,10 +262,7 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
     return () => window.removeEventListener("resize", onResize);
   }, []);
   const [mobileAgendaOpen, setMobileAgendaOpen] = useState(false);
-  const [selectedIds, setSelectedIds]   = useState(new Set());
   const [bioName, setBioName]           = useState(null);
-  const [syncMsg, setSyncMsg]           = useState("");
-  const [syncType, setSyncType]         = useState("");
   const [activeDay, setActiveDay]       = useState("ALL");
 
   // Jump to the day containing the target session when navigated from Speakers tab
@@ -286,80 +279,10 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
   const [filterSpeaker, setFilterSpeaker] = useState("ALL");
   const [filterTrack, setFilterTrack]   = useState("ALL");
   const [filterLive, setFilterLive]     = useState("ALL");
-  const saveTimer = useRef(null);
-  const UID = useRef(getOrCreateUID()).current;
-
-  function setSync(msg, type, autoClear = true) {
-    setSyncMsg(msg); setSyncType(type);
-    if (autoClear && type !== "busy") setTimeout(() => { setSyncMsg(""); setSyncType(""); }, 3000);
-  }
-
-  const saveToServer = useCallback(async (ids) => {
-    const arr = [...ids];
-    localStorage.setItem("scce_cache", JSON.stringify(arr));
-    try {
-      const r = await fetch(`/api/agenda?action=save`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: UID, selections: arr }),
-      });
-      if (!r.ok) throw new Error(r.status);
-      setSync("✓ Saved", "ok");
-    } catch {
-      setSync("⚠ Saved locally only", "err");
-    }
-  }, [UID]);
-
-  function debouncedSave(ids) {
-    clearTimeout(saveTimer.current);
-    setSync("Saving…", "busy", false);
-    saveTimer.current = setTimeout(() => saveToServer(ids), 800);
-  }
-
-  useEffect(() => {
-    async function load() {
-      setSync("Loading…", "busy", false);
-      try {
-        const r = await fetch(`/api/agenda?action=load&uid=${UID}`);
-        if (!r.ok) throw new Error(r.status);
-        const data = await r.json();
-        setSelectedIds(new Set(data.selections || []));
-        setSync("✓ Loaded", "ok");
-      } catch {
-        setSync("⚠ Offline", "err");
-        const cache = localStorage.getItem("scce_cache");
-        if (cache) setSelectedIds(new Set(JSON.parse(cache)));
-      }
-    }
-    load();
-  }, [UID]);
-
-  function select(id) {
-    setSelectedIds(prev => {
-      const next = new Set(prev);
-      next.add(id);
-      debouncedSave(next);
-      return next;
-    });
-  }
-
-  function deselect(id) {
-    setSelectedIds(prev => {
-      const next = new Set(prev);
-      next.delete(id);
-      debouncedSave(next);
-      return next;
-    });
-  }
 
   async function clearAll() {
     if (!confirm("Clear all your picks?")) return;
-    setSelectedIds(new Set());
-    localStorage.removeItem("scce_cache");
-    try {
-      await fetch(`/api/agenda?action=clear&uid=${UID}`, { method: "DELETE" });
-      setSync("✓ Cleared", "ok");
-    } catch { setSync("Cleared locally", "err"); }
+    await clearAllShared();
   }
 
   function exportCSV() {
@@ -423,7 +346,7 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
         <div style={{ ...s.uidBox, ...(isMobile ? { fontSize: "10px" } : {}) }}>
           {!isMobile && <span style={s.uidLabel}>Your ID </span>}
           <span style={s.uidVal}>{UID.slice(0, isMobile ? 8 : 14)}…</span>
-          <button style={s.uidCopy} onClick={() => { navigator.clipboard.writeText(UID); setSync("Copied!", "ok"); }}>Copy</button>
+          <button style={s.uidCopy} onClick={copyUID}>Copy</button>
           {syncMsg && !isMobile && <span style={{ marginLeft: "10px", fontSize: "11px", color: syncType==="ok"?"#86efac":syncType==="err"?"#fca5a5":"#94a3b8" }}>{syncMsg}</span>}
         </div>
       </div>

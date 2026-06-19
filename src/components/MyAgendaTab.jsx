@@ -1,0 +1,204 @@
+import { SESSIONS, FIXED_EVENTS, DAY_ORDER, DAY_LABELS, SPEAKERS } from "../data/sessions";
+
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday"];
+
+function timeToMinutes(timeRange) {
+  const start = timeRange.split("–")[0].trim();
+  const [timePart, ampm] = start.split(" ");
+  let [h, m] = timePart.split(":").map(Number);
+  if (ampm === "PM" && h !== 12) h += 12;
+  if (ampm === "AM" && h === 12) h = 0;
+  return h * 60 + m;
+}
+
+const EVENT_TYPE_STYLE = {
+  meal:      { icon: "🍽️", bg: "#fef9c3", border: "#fde047", text: "#854d0e" },
+  break:     { icon: "☕",  bg: "#f1f5f9", border: "#cbd5e1", text: "#475569" },
+  reception: { icon: "🥂",  bg: "#fae8ff", border: "#e9d5ff", text: "#86198f" },
+  general:   { icon: "🎤",  bg: "#dbeafe", border: "#93c5fd", text: "#1e40af" },
+  exam:      { icon: "📝",  bg: "#fee2e2", border: "#fecaca", text: "#991b1b" },
+};
+
+export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick }) {
+  const { selectedIds, clearAll, syncMsg, syncType } = agenda;
+
+  const selectedSessions = [...selectedIds]
+    .map(id => SESSIONS.find(s => s.id === id))
+    .filter(Boolean);
+
+  const totalSelected = selectedSessions.length;
+  const daysWithPicks = DAYS.filter(d => selectedSessions.some(s => s.day === d) || FIXED_EVENTS.some(e => e.day === d));
+
+  function exportCSV() {
+    if (!totalSelected) { alert("No sessions selected yet."); return; }
+    const items = [...selectedSessions].sort((a,b) =>
+      DAY_ORDER[a.day]-DAY_ORDER[b.day] || timeToMinutes(a.time)-timeToMinutes(b.time));
+    const rows = [["ID","Day","Time","Track","Title","Speakers","Live"]];
+    items.forEach(s => rows.push([s.id,s.day,s.time,s.track,`"${s.title.replace(/"/g,'""')}"`,`"${s.sp.join("; ")}"`,s.live?"Yes":"No"]));
+    const blob = new Blob([rows.map(r=>r.join(",")).join("\n")],{type:"text/csv"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "SCCE_CEI_2026_MyAgenda.csv";
+    a.click();
+  }
+
+  function printAgenda() {
+    window.print();
+  }
+
+  async function handleClearAll() {
+    if (!confirm("Clear your entire agenda? This cannot be undone.")) return;
+    await clearAll();
+  }
+
+  if (totalSelected === 0) {
+    return (
+      <div style={s.root}>
+        <div style={s.emptyState}>
+          <div style={{ fontSize: "40px", marginBottom: "12px" }}>📋</div>
+          <h2 style={s.emptyTitle}>Your agenda is empty</h2>
+          <p style={s.emptySub}>Head to the Agenda Planner to pick sessions for each time slot. They'll show up here as your personal itinerary.</p>
+          <button style={s.ctaBtn} onClick={onNavigateToPlanner}>Go to Agenda Planner →</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={s.root}>
+      {/* ── PRINT-ONLY HEADER ── */}
+      <div className="print-only" style={s.printHeader}>
+        <div style={{ fontSize: "20px", fontWeight: "800" }}>SCCE CEI 2026 — My Agenda</div>
+        <div style={{ fontSize: "10px", fontStyle: "italic", color: "#555" }}>unofficial · Sept 27–30, 2026 · Rosen Shingle Creek, Orlando FL</div>
+      </div>
+
+      {/* ── HEADER ── */}
+      <div style={s.header} className="no-print">
+        <div>
+          <h1 style={s.h1}>My Agenda</h1>
+          <p style={s.sub}>{totalSelected} session{totalSelected !== 1 ? "s" : ""} selected across {daysWithPicks.length} day{daysWithPicks.length !== 1 ? "s" : ""}</p>
+        </div>
+        <div style={s.actions}>
+          <button style={{ ...s.actionBtn, background: "#2563eb" }} onClick={exportCSV}>⬇ Export CSV</button>
+          <button style={{ ...s.actionBtn, background: "#1e293b" }} onClick={printAgenda}>🖨 Print</button>
+          <button style={{ ...s.actionBtn, background: "#dc2626" }} onClick={handleClearAll}>✕ Clear All</button>
+        </div>
+      </div>
+
+      {syncMsg && (
+        <div className="no-print" style={{ fontSize: "11px", color: syncType==="ok"?"#166534":syncType==="err"?"#dc2626":"#64748b", marginBottom: "12px" }}>
+          {syncMsg}
+        </div>
+      )}
+
+      {/* ── DAY-BY-DAY ITINERARY ── */}
+      {DAYS.map(day => {
+        const daySessions = selectedSessions.filter(s => s.day === day);
+        const dayFixed = FIXED_EVENTS.filter(e => e.day === day);
+        if (daySessions.length === 0 && dayFixed.length === 0) return null;
+
+        const timeline = [
+          ...daySessions.map(s => ({ kind: "session", ...s })),
+          ...dayFixed.map(e => ({ kind: "fixed", ...e })),
+        ].sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+
+        return (
+          <div key={day} style={s.daySection}>
+            <div style={s.dayHeader}>{DAY_LABELS[day]}</div>
+            {timeline.map(item => {
+              if (item.kind === "fixed") {
+                const style = EVENT_TYPE_STYLE[item.type] || EVENT_TYPE_STYLE.general;
+                return (
+                  <div key={item.id} style={{ ...s.timelineRow, background: style.bg, border: `1px solid ${style.border}` }}>
+                    <div style={{ ...s.timelineTime, color: style.text }}>{item.time}</div>
+                    <div style={{ ...s.timelineContent, color: style.text, fontWeight: "600" }}>
+                      <span style={{ marginRight: "6px" }}>{style.icon}</span>{item.title}
+                    </div>
+                    <span className="no-print" style={{ fontSize: "9px", fontWeight: "700", color: style.text, opacity: 0.65, marginLeft: "auto", whiteSpace: "nowrap" }}>
+                      ALL ATTENDEES
+                    </span>
+                  </div>
+                );
+              }
+              return (
+                <div key={item.id} style={{ ...s.timelineRow, background: "#fff", border: "1px solid #e2e8f0", borderLeft: "4px solid #2563eb" }}>
+                  <div style={{ ...s.timelineTime, color: "#2563eb" }}>{item.time}</div>
+                  <div style={s.sessionContent}>
+                    <div style={s.sessionMeta}>
+                      <span style={s.sid}>{item.id}</span>
+                      <span style={s.trackTag}>{item.track}</span>
+                      {item.live && <span style={s.liveTag}>📡 Live</span>}
+                    </div>
+                    <div style={s.sessionTitle}>{item.title}</div>
+                    {item.sp.length > 0 && (
+                      <div style={s.speakerRow}>
+                        {item.sp.map(name => {
+                          const d = SPEAKERS[name] ?? {};
+                          return (
+                            <button
+                              key={name}
+                              className="no-print"
+                              style={s.speakerBtn}
+                              onClick={() => onBioClick?.(name)}
+                              title={d.role && d.co ? `${d.role}, ${d.co}` : ""}
+                            >
+                              {name}
+                            </button>
+                          );
+                        })}
+                        <span className="print-only" style={s.speakerPrintText}>
+                          {item.sp.join(", ")}
+                        </span>
+                      </div>
+                    )}
+                    {item.desc && item.desc.length > 0 && (
+                      <ul style={s.descList}>
+                        {item.desc.map((line, i) => <li key={i} style={s.descItem}>{line}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+const s = {
+  root: { fontFamily: "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif", padding: "24px 28px", maxWidth: "900px", margin: "0 auto" },
+
+  printHeader: { display: "none" },
+
+  header: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "14px", marginBottom: "16px" },
+  h1: { margin: "0 0 4px", fontSize: "22px", fontWeight: "800", color: "#0f172a" },
+  sub: { margin: 0, fontSize: "12px", color: "#64748b" },
+  actions: { display: "flex", gap: "8px", flexWrap: "wrap" },
+  actionBtn: { border: "none", color: "#fff", padding: "9px 16px", fontSize: "12px", fontWeight: "700", borderRadius: "6px", cursor: "pointer" },
+
+  emptyState: { textAlign: "center", padding: "80px 24px", maxWidth: "440px", margin: "0 auto" },
+  emptyTitle: { fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 8px" },
+  emptySub:   { fontSize: "13px", color: "#64748b", lineHeight: "1.6", margin: "0 0 20px" },
+  ctaBtn:     { background: "#2563eb", color: "#fff", border: "none", borderRadius: "8px", padding: "11px 22px", fontSize: "13px", fontWeight: "700", cursor: "pointer" },
+
+  daySection: { marginBottom: "28px" },
+  dayHeader:  { fontSize: "15px", fontWeight: "800", color: "#0f172a", marginBottom: "10px", paddingBottom: "8px", borderBottom: "2px solid #2563eb" },
+
+  timelineRow: { display: "flex", gap: "14px", alignItems: "flex-start", borderRadius: "8px", padding: "12px 16px", marginBottom: "8px" },
+  timelineTime: { fontSize: "11px", fontWeight: "800", minWidth: "120px", flexShrink: 0, paddingTop: "1px" },
+  timelineContent: { fontSize: "13px", flex: 1 },
+
+  sessionContent: { flex: 1 },
+  sessionMeta: { display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "5px" },
+  sid: { background: "#eff6ff", color: "#2563eb", fontWeight: "700", fontSize: "10px", padding: "2px 7px", borderRadius: "4px", textTransform: "uppercase" },
+  trackTag: { fontSize: "10px", fontWeight: "600", background: "#f1f5f9", color: "#475569", padding: "2px 7px", borderRadius: "4px", textTransform: "uppercase" },
+  liveTag: { fontSize: "10px", fontWeight: "700", background: "#dcfce7", color: "#166534", padding: "2px 7px", borderRadius: "4px" },
+  sessionTitle: { fontSize: "13.5px", fontWeight: "700", color: "#0f172a", marginBottom: "6px" },
+  speakerRow: { display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "6px" },
+  speakerBtn: { background: "none", border: "none", padding: 0, fontSize: "11.5px", fontWeight: "600", color: "#2563eb", textDecoration: "underline", cursor: "pointer" },
+  speakerPrintText: { fontSize: "11px", color: "#333" },
+  descList: { margin: "6px 0 0", paddingLeft: "18px", display: "flex", flexDirection: "column", gap: "3px" },
+  descItem: { fontSize: "11px", color: "#475569", lineHeight: "1.45" },
+};
