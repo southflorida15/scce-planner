@@ -49,6 +49,7 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
   }
 
   const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [electiveOnly, setElectiveOnly] = useState(false);
   const [shareBusy, setShareBusy] = useState(false);
   const canNativeShareFiles = typeof navigator !== "undefined" &&
     navigator.canShare &&
@@ -127,7 +128,9 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
           <h1 style={s.h1}>My Agenda</h1>
           <p style={s.sub}>
             {noPicksYet
-              ? "No sessions picked yet — showing the fixed conference schedule"
+              ? (electiveOnly
+                  ? "No elective sessions picked yet"
+                  : "No sessions picked yet — showing the fixed conference schedule")
               : `${totalSelected} session${totalSelected !== 1 ? "s" : ""} selected across ${daysWithPicks.length} day${daysWithPicks.length !== 1 ? "s" : ""}`}
           </p>
         </div>
@@ -180,6 +183,23 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
         </div>
       </div>
 
+      <div className="no-print" style={s.electiveRow}>
+        <label style={s.electiveLabel}>
+          <input
+            type="checkbox"
+            checked={electiveOnly}
+            onChange={e => setElectiveOnly(e.target.checked)}
+            style={{ cursor: "pointer" }}
+          />
+          Show only my elective sessions
+        </label>
+        <span style={s.electiveHint}>
+          {electiveOnly
+            ? "Hiding meals, breaks, and general sessions shared by all attendees"
+            : "Includes meals, breaks, and general sessions everyone attends"}
+        </span>
+      </div>
+
       {noPicksYet && (
         <div className="no-print" style={s.nudgeBanner}>
           <span style={{ fontSize: "16px" }}>💡</span>
@@ -194,10 +214,14 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
       )}
 
       {/* ── DAY-BY-DAY ITINERARY ── */}
+      {electiveOnly && totalSelected === 0 && (
+        <div className="no-print" style={s.electiveEmptyState}>
+          You haven't selected any elective sessions yet. Uncheck the box above to see the fixed conference schedule, or head to the Planner to make picks.
+        </div>
+      )}
       {DAYS.map(day => {
         const daySessions = selectedSessions.filter(s => s.day === day);
-        const dayFixed = FIXED_EVENTS.filter(e => e.day === day);
-        if (daySessions.length === 0 && dayFixed.length === 0) return null;
+        const dayFixed = electiveOnly ? [] : FIXED_EVENTS.filter(e => e.day === day);
 
         // Group selected sessions by time so 2-picks-per-slot render side by side
         const sessionsByTime = {};
@@ -206,15 +230,44 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
           sessionsByTime[s.time].push(s);
         });
 
-        const timeline = [
+        let timeline = [
           ...Object.entries(sessionsByTime).map(([time, group]) => ({ kind: "session-group", time, sessions: group })),
           ...dayFixed.map(e => ({ kind: "fixed", ...e })),
-        ].sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+        ];
+
+        // In elective-only mode, also show empty placeholders for slots with
+        // electives available but nothing picked yet — mirrors the Planner's
+        // grey "no selection" state.
+        if (electiveOnly) {
+          const allElectiveTimes = [...new Set(
+            SESSIONS.filter(sess => sess.day === day && sess.sp.length > 0).map(sess => sess.time)
+          )];
+          allElectiveTimes.forEach(time => {
+            if (!sessionsByTime[time]) {
+              timeline.push({ kind: "empty-slot", time });
+            }
+          });
+        }
+
+        timeline.sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+
+        if (timeline.length === 0) return null;
 
         return (
           <div key={day} style={s.daySection}>
             <div style={s.dayHeader}>{DAY_LABELS[day]}</div>
             {timeline.map(item => {
+              if (item.kind === "empty-slot") {
+                return (
+                  <div key={`empty-${item.time}`} style={s.emptySlotRow}>
+                    <div style={s.emptySlotTime}>{item.time}</div>
+                    <div style={s.emptySlotLabel}>
+                      <span style={s.emptySlotDot} />
+                      No selection yet
+                    </div>
+                  </div>
+                );
+              }
               if (item.kind === "fixed") {
                 const style = EVENT_TYPE_STYLE[item.type] || EVENT_TYPE_STYLE.general;
                 return (
@@ -321,12 +374,20 @@ const s = {
   emptySub:   { fontSize: "13px", color: "#64748b", lineHeight: "1.6", margin: "0 0 20px" },
   ctaBtn:     { background: "#2563eb", color: "#fff", border: "none", borderRadius: "8px", padding: "11px 22px", fontSize: "13px", fontWeight: "700", cursor: "pointer" },
   nudgeBanner:{ display: "flex", alignItems: "center", gap: "10px", background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px", padding: "10px 16px", fontSize: "12px", color: "#1e40af", marginBottom: "20px" },
+  electiveRow: { display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", marginBottom: "16px", paddingBottom: "14px", borderBottom: "1px solid #e2e8f0" },
+  electiveLabel: { display: "flex", alignItems: "center", gap: "7px", fontSize: "12.5px", fontWeight: "700", color: "#0f172a", cursor: "pointer" },
+  electiveHint: { fontSize: "11px", color: "#94a3b8" },
+  electiveEmptyState: { textAlign: "center", padding: "48px 24px", fontSize: "12.5px", color: "#64748b", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px" },
   nudgeLink:  { background: "none", border: "none", padding: 0, color: "#2563eb", fontWeight: "700", textDecoration: "underline", cursor: "pointer", fontSize: "inherit" },
 
   daySection: { marginBottom: "28px" },
   dayHeader:  { fontSize: "15px", fontWeight: "800", color: "#0f172a", marginBottom: "10px", paddingBottom: "8px", borderBottom: "2px solid #2563eb" },
 
   timelineRow: { display: "flex", gap: "14px", alignItems: "flex-start", borderRadius: "8px", padding: "12px 16px", marginBottom: "8px" },
+  emptySlotRow: { display: "flex", gap: "14px", alignItems: "center", borderRadius: "8px", padding: "12px 16px", marginBottom: "8px", background: "#f8fafc", border: "1px solid #e2e8f0", borderLeft: "4px solid #cbd5e1" },
+  emptySlotTime: { fontSize: "11px", fontWeight: "800", color: "#94a3b8", minWidth: "120px", flexShrink: 0 },
+  emptySlotLabel: { fontSize: "12px", fontWeight: "700", color: "#64748b", display: "flex", alignItems: "center", gap: "8px" },
+  emptySlotDot: { width: "9px", height: "9px", borderRadius: "50%", background: "#94a3b8", flexShrink: 0, boxShadow: "0 0 0 3px #e2e8f0" },
   timelineTime: { fontSize: "11px", fontWeight: "800", minWidth: "120px", flexShrink: 0, paddingTop: "1px" },
   timelineContent: { fontSize: "13px", flex: 1 },
 
