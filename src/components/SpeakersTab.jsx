@@ -140,9 +140,9 @@ export default function SpeakersTab({ onSessionClick }) {
   const [csvError, setCsvError]           = useState("");
   const [searchText, setSearchText]       = useState("");
   const [filterIndustry, setFilterIndustry] = useState("ALL");
-  const [filterLinkedIn, setFilterLinkedIn] = useState(false);     // has LinkedIn URL
-  const [filterBioMissing, setFilterBioMissing] = useState(false); // has LinkedIn, no bio yet
-  const [filterMissingBoth, setFilterMissingBoth] = useState(false); // no LinkedIn, no bio
+  const [filterLinkedInFound, setFilterLinkedInFound] = useState(false);     // has LinkedIn URL
+  const [filterLinkedInMissing, setFilterLinkedInMissing] = useState(false); // no LinkedIn URL
+  const [filterBioMissing, setFilterBioMissing] = useState(false);           // bio not written
   const [filterConnected, setFilterConnected] = useState("ALL");
   const [filterMultiSession, setFilterMultiSession] = useState(false);
   const [filterLocation, setFilterLocation] = useState("");
@@ -186,9 +186,9 @@ export default function SpeakersTab({ onSessionClick }) {
             !sp.co.toLowerCase().includes(q) &&
             !(sp.location||"").toLowerCase().includes(q)) return false;
         if (filterIndustry !== "ALL" && sp.industry !== filterIndustry) return false;
-        if (filterLinkedIn && !sp.li) return false;
-        if (filterBioMissing && !(sp.li && !sp.v)) return false;
-        if (filterMissingBoth && !(!sp.li && !sp.v)) return false;
+        if (filterLinkedInFound && !sp.li) return false;
+        if (filterLinkedInMissing && sp.li) return false;
+        if (filterBioMissing && sp.v) return false;
         if (filterConnected === "yes" && sp.isConnected !== true)  return false;
         if (filterConnected === "no"  && sp.isConnected !== false) return false;
         if (filterMultiSession && sp.sessions.length <= 1) return false;
@@ -202,12 +202,12 @@ export default function SpeakersTab({ onSessionClick }) {
         if (sortBy === "sessions")return b.sessions.length - a.sessions.length;
         return 0;
       });
-  }, [allSpeakers, searchText, filterIndustry, filterLinkedIn, filterBioMissing, filterMissingBoth, filterConnected, filterMultiSession, filterLocation, sortBy]);
+  }, [allSpeakers, searchText, filterIndustry, filterLinkedInFound, filterLinkedInMissing, filterBioMissing, filterConnected, filterMultiSession, filterLocation, sortBy]);
 
   const connectedCount  = connections ? allSpeakers.filter(s => s.isConnected).length : 0;
-  const linkedInCount   = allSpeakers.filter(s => s.li).length;
-  const bioMissingCount = allSpeakers.filter(s => s.li && !s.v).length;
-  const missingBothCount = allSpeakers.filter(s => !s.li && !s.v).length;
+  const linkedInFoundCount   = allSpeakers.filter(s => s.li).length;
+  const linkedInMissingCount = allSpeakers.filter(s => !s.li).length;
+  const bioMissingCount      = allSpeakers.filter(s => !s.v).length;
   const multiCount      = allSpeakers.filter(s => s.sessions.length > 1).length;
 
   return (
@@ -221,25 +221,25 @@ export default function SpeakersTab({ onSessionClick }) {
         </div>
         <div style={s.statsRow}>
           <button
-            style={{ ...s.stat, ...(filterLinkedIn ? s.statActive : {}) }}
-            onClick={() => setFilterLinkedIn(v => !v)}
-            title="Speakers with a confirmed LinkedIn profile"
+            style={{ ...s.stat, ...(filterLinkedInFound ? s.statActive : {}) }}
+            onClick={() => setFilterLinkedInFound(v => !v)}
+            title="Has a confirmed LinkedIn URL"
           >
-            <span style={s.statN}>{linkedInCount}</span><span style={s.statL}>LinkedIn Found</span>
+            <span style={s.statN}>{linkedInFoundCount}</span><span style={s.statL}>LinkedIn Found</span>
+          </button>
+          <button
+            style={{ ...s.stat, ...(filterLinkedInMissing ? s.statActive : {}) }}
+            onClick={() => setFilterLinkedInMissing(v => !v)}
+            title="Missing a LinkedIn URL"
+          >
+            <span style={s.statN}>{linkedInMissingCount}</span><span style={s.statL}>LinkedIn Missing</span>
           </button>
           <button
             style={{ ...s.stat, ...(filterBioMissing ? s.statActive : {}) }}
             onClick={() => setFilterBioMissing(v => !v)}
-            title="LinkedIn confirmed, but company/role/bio not yet written"
+            title="Missing a bio for this speaker"
           >
-            <span style={s.statN}>{bioMissingCount}</span><span style={s.statL}>Bio Missing</span>
-          </button>
-          <button
-            style={{ ...s.stat, ...(filterMissingBoth ? s.statActive : {}) }}
-            onClick={() => setFilterMissingBoth(v => !v)}
-            title="No LinkedIn profile and no bio yet"
-          >
-            <span style={s.statN}>{missingBothCount}</span><span style={s.statL}>Missing Both</span>
+            <span style={s.statN}>{bioMissingCount}</span><span style={s.statL}>Missing Bio</span>
           </button>
           <button
             style={{ ...s.stat, ...(filterMultiSession ? s.statActive : {}) }}
