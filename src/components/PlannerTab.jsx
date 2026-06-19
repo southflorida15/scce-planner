@@ -66,24 +66,35 @@ const EVENT_TYPE_STYLE = {
   exam:      { icon: "📝",  bg: "#fee2e2", border: "#fecaca", text: "#991b1b" },
 };
 
-function FixedEventRow({ event }) {
+function FixedEventRow({ event, compact }) {
   const style = EVENT_TYPE_STYLE[event.type] || EVENT_TYPE_STYLE.general;
   return (
     <div style={{ marginBottom: "8px" }}>
       <div style={{
         background: style.bg, border: `1px solid ${style.border}`, borderRadius: "8px",
-        padding: "10px 16px", display: "flex", alignItems: "center", gap: "14px",
+        padding: compact ? "8px 12px" : "10px 16px",
+        display: "flex", alignItems: compact ? "flex-start" : "center", gap: compact ? "8px" : "14px",
+        flexDirection: compact ? "column" : "row",
       }}>
-        <div style={{ fontSize: "11px", fontWeight: "800", color: style.text, minWidth: "130px", flexShrink: 0 }}>
-          {event.time}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%" }}>
+          <div style={{ fontSize: compact ? "10px" : "11px", fontWeight: "800", color: style.text, minWidth: compact ? "auto" : "130px", flexShrink: 0 }}>
+            {event.time}
+          </div>
+          {compact && (
+            <span style={{ marginLeft: "auto", fontSize: "8px", fontWeight: "700", color: style.text, opacity: 0.6 }}>
+              ALL ATTENDEES
+            </span>
+          )}
         </div>
-        <div style={{ fontSize: "13px", display: "flex", alignItems: "center", gap: "8px", color: style.text, fontWeight: "600" }}>
+        <div style={{ fontSize: compact ? "12px" : "13px", display: "flex", alignItems: "center", gap: "8px", color: style.text, fontWeight: "600" }}>
           <span>{style.icon}</span>
           {event.title}
         </div>
-        <span style={{ marginLeft: "auto", fontSize: "10px", fontWeight: "700", color: style.text, opacity: 0.7, whiteSpace: "nowrap" }}>
-          Included for all attendees
-        </span>
+        {!compact && (
+          <span style={{ marginLeft: "auto", fontSize: "10px", fontWeight: "700", color: style.text, opacity: 0.7, whiteSpace: "nowrap" }}>
+            Included for all attendees
+          </span>
+        )}
       </div>
     </div>
   );
@@ -139,7 +150,7 @@ function SessionOption({ session, onSelect, onBioClick }) {
   );
 }
 
-function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlightSessionId }) {
+function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlightSessionId, isMobile }) {
   const [open, setOpen] = useState(false);
   const rowRef = useRef(null);
   const selectedSession = selectedId ? slot.sessions.find(s => s.id === selectedId) : null;
@@ -165,15 +176,16 @@ function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlight
       {/* ── SLOT CARD ── */}
       <div style={{
         ...s.slotCard,
+        ...(isMobile ? { flexDirection: "column", gap: "8px", padding: "12px" } : {}),
         borderLeft: isFilled ? "4px solid #2563eb" : "4px solid #e2e8f0",
         background: isFilled ? "#f0f7ff" : open ? "#fafafa" : "#fff",
       }}>
         {/* Time label */}
-        <div style={s.slotTime}>{slot.time}</div>
+        <div style={{ ...s.slotTime, ...(isMobile ? { minWidth: "auto" } : {}) }}>{slot.time}</div>
 
         {isFilled ? (
           /* FILLED STATE */
-          <div style={s.filledBody}>
+          <div style={{ ...s.filledBody, ...(isMobile ? { flexDirection: "column", gap: "8px" } : {}) }}>
             <div style={s.filledLeft}>
               <div style={s.filledMeta}>
                 <span style={s.sid}>{selectedSession.id}</span>
@@ -199,7 +211,7 @@ function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlight
                 </>
               )}
             </div>
-            <div style={s.filledActions}>
+            <div style={{ ...s.filledActions, ...(isMobile ? { flexDirection: "row" } : {}) }}>
               <button style={s.swapBtn} onClick={() => { onDeselect(selectedId); setOpen(true); }}>
                 ⇄ Swap
               </button>
@@ -229,7 +241,7 @@ function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlight
 
       {/* ── EXPANDED OPTIONS ── */}
       {open && !isFilled && (
-        <div style={s.optionsPanel}>
+        <div style={{ ...s.optionsPanel, ...(isMobile ? { marginLeft: 0, marginTop: "8px" } : {}) }}>
           {slot.sessions
             .filter(s => s.sp.length > 0)
             .map(session => (
@@ -247,6 +259,13 @@ function SlotRow({ slot, selectedId, onSelect, onDeselect, onBioClick, highlight
 }
 
 export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 860);
+  useEffect(() => {
+    function onResize() { setIsMobile(window.innerWidth < 860); }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  const [mobileAgendaOpen, setMobileAgendaOpen] = useState(false);
   const [selectedIds, setSelectedIds]   = useState(new Set());
   const [bioName, setBioName]           = useState(null);
   const [syncMsg, setSyncMsg]           = useState("");
@@ -396,27 +415,27 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
     <div style={s.root}>
 
       {/* ── TOP BAR ── */}
-      <div style={s.topBar}>
+      <div style={{ ...s.topBar, ...(isMobile ? s.topBarMobile : {}) }}>
         <div>
-          <h1 style={s.h1}>SCCE CEI 2026</h1>
-          <p style={s.sub}>25th Annual Compliance &amp; Ethics Institute · Rosen Shingle Creek, Orlando FL</p>
+          <h1 style={{ ...s.h1, ...(isMobile ? { fontSize: "16px" } : {}) }}>SCCE CEI 2026</h1>
+          {!isMobile && <p style={s.sub}>25th Annual Compliance &amp; Ethics Institute · Rosen Shingle Creek, Orlando FL</p>}
         </div>
-        <div style={s.uidBox}>
-          <span style={s.uidLabel}>Your ID </span>
-          <span style={s.uidVal}>{UID.slice(0,14)}…</span>
+        <div style={{ ...s.uidBox, ...(isMobile ? { fontSize: "10px" } : {}) }}>
+          {!isMobile && <span style={s.uidLabel}>Your ID </span>}
+          <span style={s.uidVal}>{UID.slice(0, isMobile ? 8 : 14)}…</span>
           <button style={s.uidCopy} onClick={() => { navigator.clipboard.writeText(UID); setSync("Copied!", "ok"); }}>Copy</button>
-          {syncMsg && <span style={{ marginLeft: "10px", fontSize: "11px", color: syncType==="ok"?"#86efac":syncType==="err"?"#fca5a5":"#94a3b8" }}>{syncMsg}</span>}
+          {syncMsg && !isMobile && <span style={{ marginLeft: "10px", fontSize: "11px", color: syncType==="ok"?"#86efac":syncType==="err"?"#fca5a5":"#94a3b8" }}>{syncMsg}</span>}
         </div>
       </div>
 
       {/* ── DAY TABS ── */}
-      <div style={s.tabsBar}>
+      <div style={{ ...s.tabsBar, ...(isMobile ? s.tabsBarMobile : {}) }}>
         {/* All Days tab — first */}
-        <button style={{ ...s.tab, ...(activeDay === "ALL" ? s.tabActive : {}) }} onClick={() => setActiveDay("ALL")}>
+        <button style={{ ...s.tab, ...(isMobile ? s.tabMobile : {}), ...(activeDay === "ALL" ? s.tabActive : {}) }} onClick={() => setActiveDay("ALL")}>
           <span style={s.tabDay}>All Days</span>
-          <span style={{ ...s.tabSub, ...(activeDay==="ALL"?{color:"#93c5fd"}:{}) }}>Full schedule</span>
+          {!isMobile && <span style={{ ...s.tabSub, ...(activeDay==="ALL"?{color:"#93c5fd"}:{}) }}>Full schedule</span>}
           <span style={{ ...s.tabPill, background: totalSelected > 0 ? "#2563eb" : "#334155", color: totalSelected > 0 ? "#fff" : "#64748b" }}>
-            {totalSelected} picks
+            {totalSelected}
           </span>
         </button>
         {DAYS.map(day => {
@@ -425,9 +444,9 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
           const total  = daySlots.filter(sl => sl.sessions.some(s => s.sp.length > 0)).length;
           const isActive = activeDay === day;
           return (
-            <button key={day} style={{ ...s.tab, ...(isActive ? s.tabActive : {}) }} onClick={() => setActiveDay(day)}>
-              <span style={s.tabDay}>{day}</span>
-              <span style={{ ...s.tabSub, ...(isActive?{color:"#93c5fd"}:{}) }}>{DAY_SUBTITLES[day]}</span>
+            <button key={day} style={{ ...s.tab, ...(isMobile ? s.tabMobile : {}), ...(isActive ? s.tabActive : {}) }} onClick={() => setActiveDay(day)}>
+              <span style={s.tabDay}>{isMobile ? day.slice(0,3) : day}</span>
+              {!isMobile && <span style={{ ...s.tabSub, ...(isActive?{color:"#93c5fd"}:{}) }}>{DAY_SUBTITLES[day]}</span>}
               <span style={{ ...s.tabPill, background: filled > 0 ? "#2563eb" : "#334155", color: filled > 0 ? "#fff" : "#64748b" }}>
                 {filled}/{total}
               </span>
@@ -437,29 +456,29 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
       </div>
 
       {/* ── FILTER PANEL ── */}
-      <div style={s.filterPanel}>
+      <div style={{ ...s.filterPanel, ...(isMobile ? s.filterPanelMobile : {}) }}>
         <div style={s.filterPanelHeader}>
-          <span style={s.filterPanelTitle}>Search and Filter Schedule Items</span>
+          {!isMobile && <span style={s.filterPanelTitle}>Search and Filter Schedule Items</span>}
           <button style={s.filterToggle} onClick={() => setShowFilters(v => !v)}>
-            {showFilters ? "Hide Filters ▲" : "Show Filters ▼"}
+            {showFilters ? (isMobile ? "Filters ▲" : "Hide Filters ▲") : (isMobile ? "Filters ▼" : "Show Filters ▼")}
           </button>
           {activeFiltersCount > 0 && (
             <button style={s.clearFiltersBtn} onClick={() => { setFilterText(""); setFilterSpeaker("ALL"); setFilterTrack("ALL"); setFilterLive("ALL"); }}>
-              Clear all filters ({activeFiltersCount})
+              Clear ({activeFiltersCount})
             </button>
           )}
         </div>
         {showFilters && (
           <div style={s.filterGrid}>
             <div style={s.filterGroup}>
-              <label style={s.filterLabel}>Schedule Item Search</label>
+              {!isMobile && <label style={s.filterLabel}>Schedule Item Search</label>}
               <div style={s.searchWrap}>
                 <span style={s.searchIcon}>🔍</span>
-                <input style={s.searchInput} value={filterText} onChange={e => setFilterText(e.target.value)} placeholder="Search by title, speaker, or company…" />
+                <input style={s.searchInput} value={filterText} onChange={e => setFilterText(e.target.value)} placeholder="Search title, speaker, company…" />
                 {filterText && <button style={s.searchClear} onClick={() => setFilterText("")}>✕</button>}
               </div>
             </div>
-            <div style={s.filterRow}>
+            <div style={{ ...s.filterRow, ...(isMobile ? { flexDirection: "column" } : {}) }}>
               <div style={s.filterGroup}>
                 <label style={s.filterLabel}>Speaker</label>
                 <select style={s.filterSelect} value={filterSpeaker} onChange={e => setFilterSpeaker(e.target.value)}>
@@ -488,8 +507,8 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
       </div>
 
       {/* ── MAIN CONTENT ── */}
-      <div style={s.content}>
-        <div style={s.slotList}>
+      <div style={{ ...s.content, ...(isMobile ? s.contentMobile : {}) }}>
+        <div style={{ ...s.slotList, ...(isMobile ? { paddingRight: 0, paddingBottom: "76px" } : {}) }}>
 
           {activeDay === "ALL" ? (
             // ── ALL DAYS VIEW ──
@@ -498,13 +517,13 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
                 <div style={s.allDayHdr}>{DAY_LABELS[day]}</div>
                 {getTimelineForDay(day, getSlotsToRender(day)).map(item => {
                   if (item.kind === "fixed") {
-                    return <FixedEventRow key={item.id} event={item} />;
+                    return <FixedEventRow key={item.id} event={item} compact={isMobile} />;
                   }
                   const selectedId = item.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
                   return (
                     <SlotRow key={`${item.day}|${item.time}`} slot={item} selectedId={selectedId}
                       onSelect={select} onDeselect={deselect} onBioClick={setBioName}
-                      highlightSessionId={jumpToSessionId} />
+                      highlightSessionId={jumpToSessionId} isMobile={isMobile} />
                   );
                 })}
               </div>
@@ -518,52 +537,104 @@ export default function PlannerTab({ jumpToSessionId, onJumpHandled }) {
               }
               return timeline.map(item => {
                 if (item.kind === "fixed") {
-                  return <FixedEventRow key={item.id} event={item} />;
+                  return <FixedEventRow key={item.id} event={item} compact={isMobile} />;
                 }
                 const selectedId = item.sessions.find(s => selectedIds.has(s.id))?.id ?? null;
                 return (
                   <SlotRow key={`${item.day}|${item.time}`} slot={item} selectedId={selectedId}
                     onSelect={select} onDeselect={deselect} onBioClick={setBioName}
-                    highlightSessionId={jumpToSessionId} />
+                    highlightSessionId={jumpToSessionId} isMobile={isMobile} />
                 );
               });
             })()
           )}
         </div>
 
-        {/* ── SIDEBAR ── */}
-        <div style={s.sidebar}>
-          <div style={s.sbHead}>My Agenda
-            <span style={s.sbCount}>{totalSelected} session{totalSelected !== 1 ? "s" : ""}</span>
+        {/* ── SIDEBAR (desktop) ── */}
+        {!isMobile && (
+          <div style={s.sidebar}>
+            <div style={s.sbHead}>My Agenda
+              <span style={s.sbCount}>{totalSelected} session{totalSelected !== 1 ? "s" : ""}</span>
+            </div>
+            {totalSelected === 0
+              ? <p style={s.sbEmpty}>Open a time slot and select a session to build your agenda.</p>
+              : DAYS.map(day => {
+                  const dayItems = [...selectedIds]
+                    .map(id => SESSIONS.find(s => s.id === id))
+                    .filter(s => s?.day === day)
+                    .sort((a,b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+                  if (!dayItems.length) return null;
+                  return (
+                    <div key={day} style={{ marginBottom: "16px" }}>
+                      <div style={s.sbDayLabel}>{day}</div>
+                      {dayItems.map(item => (
+                        <div key={item.id} style={s.sbItem}>
+                          <div style={s.sbItemTime}>{item.time}</div>
+                          <div style={s.sbItemTitle}>{item.title}</div>
+                          <button style={s.sbRemove} onClick={() => deselect(item.id)}>✕</button>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })
+            }
+            <div style={s.sbActions}>
+              <button style={{ ...s.btn, background: "#2563eb" }} onClick={exportCSV}>⬇ Export CSV</button>
+              {totalSelected > 0 && <button style={{ ...s.btn, background: "#dc2626" }} onClick={clearAll}>✕ Clear All</button>}
+            </div>
           </div>
-          {totalSelected === 0
-            ? <p style={s.sbEmpty}>Open a time slot and select a session to build your agenda.</p>
-            : DAYS.map(day => {
-                const dayItems = [...selectedIds]
-                  .map(id => SESSIONS.find(s => s.id === id))
-                  .filter(s => s?.day === day)
-                  .sort((a,b) => timeToMinutes(a.time) - timeToMinutes(b.time));
-                if (!dayItems.length) return null;
-                return (
-                  <div key={day} style={{ marginBottom: "16px" }}>
-                    <div style={s.sbDayLabel}>{day}</div>
-                    {dayItems.map(item => (
-                      <div key={item.id} style={s.sbItem}>
-                        <div style={s.sbItemTime}>{item.time}</div>
-                        <div style={s.sbItemTitle}>{item.title}</div>
-                        <button style={s.sbRemove} onClick={() => deselect(item.id)}>✕</button>
-                      </div>
-                    ))}
-                  </div>
-                );
-              })
-          }
-          <div style={s.sbActions}>
-            <button style={{ ...s.btn, background: "#2563eb" }} onClick={exportCSV}>⬇ Export CSV</button>
-            {totalSelected > 0 && <button style={{ ...s.btn, background: "#dc2626" }} onClick={clearAll}>✕ Clear All</button>}
-          </div>
-        </div>
+        )}
       </div>
+
+      {/* ── MOBILE: sticky bottom bar + slide-up agenda drawer ── */}
+      {isMobile && (
+        <>
+          <button style={s.mobileFab} onClick={() => setMobileAgendaOpen(true)}>
+            📋 My Agenda
+            <span style={s.mobileFabBadge}>{totalSelected}</span>
+          </button>
+
+          {mobileAgendaOpen && (
+            <div style={s.mobileDrawerOverlay} onClick={() => setMobileAgendaOpen(false)}>
+              <div style={s.mobileDrawer} onClick={e => e.stopPropagation()}>
+                <div style={s.mobileDrawerHandle} />
+                <div style={s.sbHead}>My Agenda
+                  <span style={s.sbCount}>{totalSelected} session{totalSelected !== 1 ? "s" : ""}</span>
+                  <button style={s.mobileDrawerClose} onClick={() => setMobileAgendaOpen(false)}>✕</button>
+                </div>
+                <div style={{ overflowY: "auto", flex: 1 }}>
+                  {totalSelected === 0
+                    ? <p style={s.sbEmpty}>Open a time slot and select a session to build your agenda.</p>
+                    : DAYS.map(day => {
+                        const dayItems = [...selectedIds]
+                          .map(id => SESSIONS.find(s => s.id === id))
+                          .filter(s => s?.day === day)
+                          .sort((a,b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+                        if (!dayItems.length) return null;
+                        return (
+                          <div key={day} style={{ marginBottom: "16px" }}>
+                            <div style={s.sbDayLabel}>{day}</div>
+                            {dayItems.map(item => (
+                              <div key={item.id} style={s.sbItem}>
+                                <div style={s.sbItemTime}>{item.time}</div>
+                                <div style={s.sbItemTitle}>{item.title}</div>
+                                <button style={s.sbRemove} onClick={() => deselect(item.id)}>✕</button>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })
+                  }
+                </div>
+                <div style={s.sbActions}>
+                  <button style={{ ...s.btn, background: "#2563eb" }} onClick={exportCSV}>⬇ Export CSV</button>
+                  {totalSelected > 0 && <button style={{ ...s.btn, background: "#dc2626" }} onClick={clearAll}>✕ Clear All</button>}
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
       {bioName && <BioModal name={bioName} onClose={() => setBioName(null)} />}
     </div>
@@ -668,4 +739,44 @@ const s = {
   searchInput:       { flex:1, border:"none", outline:"none", padding:"8px 0", fontSize:"13px", color:"#0f172a" },
   searchClear:       { background:"none", border:"none", color:"#9ca3af", cursor:"pointer", padding:"0 10px", fontSize:"14px" },
   filterSelect:      { padding:"8px 10px", border:"1px solid #d1d5db", borderRadius:"6px", fontSize:"12px", color:"#0f172a", background:"#fff", outline:"none" },
+
+  // ── MOBILE OVERRIDES ──────────────────────────────────────────────────────
+  topBarMobile:      { padding: "10px 14px" },
+  tabsBarMobile:      { padding: "0 8px", overflowX: "auto", WebkitOverflowScrolling: "touch" },
+  tabMobile:          { padding: "10px 12px", minWidth: "auto" },
+  filterPanelMobile:  { padding: "10px 14px" },
+  contentMobile:      { gridTemplateColumns: "1fr", padding: "12px 12px 0", maxWidth: "100%" },
+
+  // mobile floating action button
+  mobileFab: {
+    position: "fixed", bottom: "16px", left: "50%", transform: "translateX(-50%)",
+    background: "#1e293b", color: "#fff", border: "none", borderRadius: "999px",
+    padding: "12px 22px", fontSize: "13px", fontWeight: "700", cursor: "pointer",
+    display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
+    zIndex: 500,
+  },
+  mobileFabBadge: {
+    background: "#2563eb", color: "#fff", fontSize: "11px", fontWeight: "800",
+    padding: "1px 8px", borderRadius: "10px", minWidth: "20px", textAlign: "center",
+  },
+
+  // mobile drawer
+  mobileDrawerOverlay: {
+    position: "fixed", inset: 0, background: "rgba(15,23,42,0.5)",
+    zIndex: 999, display: "flex", alignItems: "flex-end",
+  },
+  mobileDrawer: {
+    background: "#fff", width: "100%", maxHeight: "80vh",
+    borderTopLeftRadius: "16px", borderTopRightRadius: "16px",
+    padding: "10px 18px 18px", display: "flex", flexDirection: "column",
+    boxShadow: "0 -8px 30px rgba(0,0,0,0.2)",
+  },
+  mobileDrawerHandle: {
+    width: "40px", height: "4px", background: "#e2e8f0", borderRadius: "2px",
+    margin: "0 auto 12px",
+  },
+  mobileDrawerClose: {
+    marginLeft: "auto", background: "#f1f5f9", border: "none", borderRadius: "50%",
+    width: "26px", height: "26px", fontSize: "12px", color: "#64748b", cursor: "pointer",
+  },
 };

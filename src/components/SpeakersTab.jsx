@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { SPEAKERS, SESSIONS } from "../data/sessions";
 
 // ── Derive location + industry from SCCE data where possible ─────────────────
@@ -130,6 +130,12 @@ function parseLinkedInCSV(text) {
 }
 
 export default function SpeakersTab({ onSessionClick }) {
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 860);
+  useEffect(() => {
+    function onResize() { setIsMobile(window.innerWidth < 860); }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
   const [connections, setConnections]     = useState(null); // Set of lowercase names
   const [csvError, setCsvError]           = useState("");
   const [searchText, setSearchText]       = useState("");
@@ -200,10 +206,10 @@ export default function SpeakersTab({ onSessionClick }) {
   const multiCount      = allSpeakers.filter(s => s.sessions.length > 1).length;
 
   return (
-    <div style={s.root}>
+    <div style={{ ...s.root, ...(isMobile ? { padding: "14px" } : {}) }}>
 
       {/* ── HEADER ── */}
-      <div style={s.header}>
+      <div style={{ ...s.header, ...(isMobile ? { flexDirection: "column", alignItems: "stretch" } : {}) }}>
         <div>
           <h2 style={s.h2}>Speakers Directory</h2>
           <p style={s.sub}>All {allSpeakers.length} confirmed speakers · SCCE CEI 2026</p>
@@ -241,7 +247,7 @@ export default function SpeakersTab({ onSessionClick }) {
 
       {/* ── LINKEDIN CONNECT BANNER ── */}
       {!connections && (
-        <div style={s.linkedInBanner}>
+        <div style={{ ...s.linkedInBanner, ...(isMobile ? { flexDirection: "column", alignItems: "stretch" } : {}) }}>
           <div style={s.bannerLeft}>
             <span style={s.liIconWrap}><LinkedInIcon size={20} /></span>
             <div>
@@ -251,7 +257,7 @@ export default function SpeakersTab({ onSessionClick }) {
               </div>
             </div>
           </div>
-          <div style={s.bannerRight}>
+          <div style={{ ...s.bannerRight, ...(isMobile ? { alignItems: "stretch" } : {}) }}>
             <input
               ref={fileRef}
               type="file"
@@ -259,7 +265,7 @@ export default function SpeakersTab({ onSessionClick }) {
               style={{ display: "none" }}
               onChange={handleCSVUpload}
             />
-            <button style={s.uploadBtn} onClick={() => fileRef.current.click()}>
+            <button style={{ ...s.uploadBtn, ...(isMobile ? { width: "100%" } : {}) }} onClick={() => fileRef.current.click()}>
               Upload Connections.csv
             </button>
             {csvError && <div style={s.csvError}>{csvError}</div>}
@@ -278,7 +284,7 @@ export default function SpeakersTab({ onSessionClick }) {
       )}
 
       {/* ── FILTERS ── */}
-      <div style={s.filters}>
+      <div style={{ ...s.filters, ...(isMobile ? { flexDirection: "column", alignItems: "stretch" } : {}) }}>
         <input style={s.fInput} value={searchText} onChange={e => setSearchText(e.target.value)}
           placeholder="🔍 Search name, company, location…" />
         <input style={s.fInput} value={filterLocation} onChange={e => setFilterLocation(e.target.value)}
@@ -309,7 +315,7 @@ export default function SpeakersTab({ onSessionClick }) {
       </div>
 
       {/* ── SPEAKERS GRID ── */}
-      <div style={s.grid}>
+      <div style={{ ...s.grid, ...(isMobile ? { gridTemplateColumns: "1fr" } : {}) }}>
         {filtered.map(sp => (
           <div key={sp.name} style={{
             ...s.card,
