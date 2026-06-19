@@ -62,33 +62,49 @@ const EVENT_TYPE_STYLE = {
 
 function FixedEventRow({ event, compact }) {
   const style = EVENT_TYPE_STYLE[event.type] || EVENT_TYPE_STYLE.general;
+
+  if (compact) {
+    return (
+      <div style={{ marginBottom: "8px" }}>
+        <div style={{
+          background: style.bg, border: `1px solid ${style.border}`, borderRadius: "8px",
+          padding: "8px 12px", display: "flex", flexDirection: "column", gap: "6px",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%" }}>
+            <div style={{ fontSize: "10px", fontWeight: "800", color: style.text }}>{event.time}</div>
+            <span style={{ marginLeft: "auto", fontSize: "8px", fontWeight: "700", color: style.text, opacity: 0.6 }}>
+              ALL ATTENDEES
+            </span>
+          </div>
+          <div style={{ fontSize: "12px", display: "flex", alignItems: "flex-start", gap: "8px", color: style.text, fontWeight: "600" }}>
+            <span>{style.icon}</span>
+            <span>{event.title}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ marginBottom: "8px" }}>
       <div style={{
         background: style.bg, border: `1px solid ${style.border}`, borderRadius: "8px",
-        padding: compact ? "8px 12px" : "10px 16px",
-        display: "flex", alignItems: compact ? "flex-start" : "center", gap: compact ? "8px" : "14px",
-        flexDirection: compact ? "column" : "row",
+        padding: "10px 16px",
+        display: "grid",
+        gridTemplateColumns: "130px 1fr 170px",
+        alignItems: "start",
+        gap: "14px",
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%" }}>
-          <div style={{ fontSize: compact ? "10px" : "11px", fontWeight: "800", color: style.text, minWidth: compact ? "auto" : "130px", flexShrink: 0 }}>
-            {event.time}
-          </div>
-          {compact && (
-            <span style={{ marginLeft: "auto", fontSize: "8px", fontWeight: "700", color: style.text, opacity: 0.6 }}>
-              ALL ATTENDEES
-            </span>
-          )}
+        <div style={{ fontSize: "11px", fontWeight: "800", color: style.text, paddingTop: "1px" }}>
+          {event.time}
         </div>
-        <div style={{ fontSize: compact ? "12px" : "13px", display: "flex", alignItems: "center", gap: "8px", color: style.text, fontWeight: "600" }}>
-          <span>{style.icon}</span>
-          {event.title}
+        <div style={{ fontSize: "13px", display: "flex", alignItems: "flex-start", gap: "8px", color: style.text, fontWeight: "600", minWidth: 0 }}>
+          <span style={{ flexShrink: 0 }}>{style.icon}</span>
+          <span>{event.title}</span>
         </div>
-        {!compact && (
-          <span style={{ marginLeft: "auto", fontSize: "10px", fontWeight: "700", color: style.text, opacity: 0.7, whiteSpace: "nowrap" }}>
-            Included for all attendees
-          </span>
-        )}
+        <span style={{ fontSize: "10px", fontWeight: "700", color: style.text, opacity: 0.7, whiteSpace: "nowrap", textAlign: "right", paddingTop: "2px" }}>
+          Included for all attendees
+        </span>
       </div>
     </div>
   );

@@ -472,7 +472,6 @@ export const SPEAKERS = {
   "Scott Intner": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
   "Shawn Marchese": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
   "Jeffrey Lyon": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
-  "Jessica Beane": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
 };
 
 

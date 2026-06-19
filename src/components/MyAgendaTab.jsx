@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { SESSIONS, FIXED_EVENTS, DAY_ORDER, DAY_LABELS, SPEAKERS } from "../data/sessions";
+import { downloadAgendaPDF, agendaPDFToBlob } from "../utils/agendaPdf";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday"];
 
@@ -46,6 +48,64 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
     window.print();
   }
 
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const [shareBusy, setShareBusy] = useState(false);
+  const canNativeShareFiles = typeof navigator !== "undefined" &&
+    navigator.canShare &&
+    navigator.canShare({ files: [new File([""], "test.pdf", { type: "application/pdf" })] });
+
+  function buildSortedItems() {
+    return [...selectedSessions].sort((a,b) =>
+      DAY_ORDER[a.day]-DAY_ORDER[b.day] || timeToMinutes(a.time)-timeToMinutes(b.time));
+  }
+
+  function handleDownloadPDF() {
+    if (!totalSelected) { alert("No sessions selected yet."); return; }
+    downloadAgendaPDF(buildSortedItems());
+    setShareMenuOpen(false);
+  }
+
+  async function handleNativeShare() {
+    if (!totalSelected) { alert("No sessions selected yet."); return; }
+    setShareBusy(true);
+    try {
+      const blob = agendaPDFToBlob(buildSortedItems());
+      const file = new File([blob], "SCCE_CEI_2026_MyAgenda.pdf", { type: "application/pdf" });
+      await navigator.share({
+        files: [file],
+        title: "SCCE CEI 2026 — My Agenda",
+        text: "Here's my agenda for SCCE CEI 2026.",
+      });
+    } catch (err) {
+      // user cancelled or share failed — silently ignore cancellation
+      if (err?.name !== "AbortError") {
+        alert("Sharing failed. Try downloading the PDF instead.");
+      }
+    } finally {
+      setShareBusy(false);
+      setShareMenuOpen(false);
+    }
+  }
+
+  function handleEmailLink() {
+    if (!totalSelected) { alert("No sessions selected yet."); return; }
+    const items = buildSortedItems();
+    const lines = items.map(s => `${s.day}, ${s.time} — ${s.title}${s.sp.length ? ` (${s.sp.join(", ")})` : ""}`);
+    const body = `My SCCE CEI 2026 Agenda:\n\n${lines.join("\n")}\n\n(Generated from the SCCE CEI 2026 Agenda Planner)`;
+    const subject = "My SCCE CEI 2026 Agenda";
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setShareMenuOpen(false);
+  }
+
+  function handleSMSLink() {
+    if (!totalSelected) { alert("No sessions selected yet."); return; }
+    const items = buildSortedItems();
+    const lines = items.slice(0, 8).map(s => `${s.time.split("–")[0].trim()} ${s.title}`);
+    const body = `My SCCE CEI 2026 agenda:\n${lines.join("\n")}${items.length > 8 ? `\n+${items.length - 8} more` : ""}`;
+    window.location.href = `sms:?body=${encodeURIComponent(body)}`;
+    setShareMenuOpen(false);
+  }
+
   async function handleClearAll() {
     if (!confirm("Clear your entire agenda? This cannot be undone.")) return;
     await clearAll();
@@ -72,7 +132,49 @@ export default function MyAgendaTab({ agenda, onNavigateToPlanner, onBioClick })
           </p>
         </div>
         <div style={s.actions}>
-          <button style={{ ...s.actionBtn, background: "#2563eb" }} onClick={exportCSV}>⬇ Export CSV</button>
+          <div style={{ position: "relative" }}>
+            <button style={{ ...s.actionBtn, background: "#7c3aed" }} onClick={() => setShareMenuOpen(v => !v)}>
+              📤 Share
+            </button>
+            {shareMenuOpen && (
+              <>
+                <div style={s.shareMenuOverlay} onClick={() => setShareMenuOpen(false)} />
+                <div style={s.shareMenu}>
+                  {canNativeShareFiles && (
+                    <button style={s.shareMenuItem} onClick={handleNativeShare} disabled={shareBusy}>
+                      <span style={s.shareMenuIcon}>📱</span>
+                      <div>
+                        <div style={s.shareMenuTitle}>{shareBusy ? "Preparing…" : "Share via Messages, Mail, AirDrop…"}</div>
+                        <div style={s.shareMenuSub}>Sends the agenda as a PDF</div>
+                      </div>
+                    </button>
+                  )}
+                  <button style={s.shareMenuItem} onClick={handleDownloadPDF}>
+                    <span style={s.shareMenuIcon}>📄</span>
+                    <div>
+                      <div style={s.shareMenuTitle}>Download PDF</div>
+                      <div style={s.shareMenuSub}>Save a copy to your device</div>
+                    </div>
+                  </button>
+                  <button style={s.shareMenuItem} onClick={handleEmailLink}>
+                    <span style={s.shareMenuIcon}>✉️</span>
+                    <div>
+                      <div style={s.shareMenuTitle}>Email</div>
+                      <div style={s.shareMenuSub}>Opens your mail app with agenda text</div>
+                    </div>
+                  </button>
+                  <button style={s.shareMenuItem} onClick={handleSMSLink}>
+                    <span style={s.shareMenuIcon}>💬</span>
+                    <div>
+                      <div style={s.shareMenuTitle}>Text Message</div>
+                      <div style={s.shareMenuSub}>Opens Messages with agenda summary</div>
+                    </div>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+          <button style={{ ...s.actionBtn, background: "#2563eb" }} onClick={exportCSV}>⬇ CSV</button>
           <button style={{ ...s.actionBtn, background: "#1e293b" }} onClick={printAgenda}>🖨 Print</button>
           {!noPicksYet && <button style={{ ...s.actionBtn, background: "#dc2626" }} onClick={handleClearAll}>✕ Clear All</button>}
         </div>
@@ -198,6 +300,21 @@ const s = {
   sub: { margin: 0, fontSize: "12px", color: "#64748b" },
   actions: { display: "flex", gap: "8px", flexWrap: "wrap" },
   actionBtn: { border: "none", color: "#fff", padding: "9px 16px", fontSize: "12px", fontWeight: "700", borderRadius: "6px", cursor: "pointer" },
+
+  shareMenuOverlay: { position: "fixed", inset: 0, zIndex: 998 },
+  shareMenu: {
+    position: "absolute", top: "calc(100% + 6px)", right: 0, zIndex: 999,
+    background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.15)", padding: "6px", minWidth: "260px",
+  },
+  shareMenuItem: {
+    display: "flex", alignItems: "flex-start", gap: "10px", width: "100%",
+    background: "none", border: "none", padding: "9px 10px", borderRadius: "7px",
+    cursor: "pointer", textAlign: "left",
+  },
+  shareMenuIcon: { fontSize: "16px", flexShrink: 0, marginTop: "1px" },
+  shareMenuTitle: { fontSize: "12.5px", fontWeight: "700", color: "#0f172a" },
+  shareMenuSub: { fontSize: "10.5px", color: "#64748b", marginTop: "1px" },
 
   emptyState: { textAlign: "center", padding: "80px 24px", maxWidth: "440px", margin: "0 auto" },
   emptyTitle: { fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 8px" },
