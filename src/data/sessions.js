@@ -15,17 +15,17 @@ export const SPEAKERS = {
   },
   "Deena King Holdaway": {
     co: "Independent", role: "Semi-Retired Chief Audit and Compliance Officer", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/deena-king-holdaway-4b2b017/",
     bio: `Deena is the author of Compliance in One Page (as Deena King) and is currently working on her next book, Strategic Compliance. Most recently Interim Chief Audit and Compliance Officer for the University of Missouri System. Past roles include CCO at the University of Texas at Tyler, Director of Compliance at Texas Woman's University, interim director of audit and compliance for Salt Lake County, and compliance roles at NV Energy and WECC. Her CIA work took her to Stockholm, Buenos Aires, Hong Kong, New Delhi, and Vienna. BYU and University of Utah graduate; 30+ years of multi-sector experience.`,
   },
   "E. Gates Garrity-Rokous": {
     co: "The Ohio State University", role: "Vice President and Chief Compliance Officer", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/gates-garrity-rokous-372a6311/",
     bio: `Gates Garrity-Rokous serves as Vice President and Chief Compliance Officer for the Office of University Compliance and Integrity at The Ohio State University. 25+ years developing, assessing and managing ethics and compliance programs across higher education, healthcare and financial services. Former CCO for GE Capital Americas; white collar defense partner at Wiggin & Dana LLP; former Assistant U.S. Attorney and healthcare fraud-enforcement officer at DOJ. JD from Yale Law School. Peace Corps volunteer, Mali, West Africa.`,
   },
   "Jennifer L. Ward": {
     co: "Department of Homeland Security", role: "Suspension and Debarment Official", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/jennifer-l-ward-a8667ab/",
     bio: `Ms. Jennifer L. Ward is the Suspension and Debarment Official (SDO) for the United States Department of Homeland Security and Acting Chair of the Interagency Suspension and Debarment Committee. Former Suspension and Debarment Director at FEMA. Prior career includes Senior Appellate Law Clerk (Colorado Court of Appeals), Assistant Attorney General (Colorado AG's Office), and work at the NSA, U.S. Army, U.S. Navy, and Lockheed Martin. JD from University of Denver Sturm College of Law. CCEP.`,
   },
   "John Hanson": {
@@ -50,7 +50,7 @@ export const SPEAKERS = {
   },
   "Roxanne Petraeus": {
     co: "Ethena", role: "Co-Founder and CEO", v: true,
-    li: "https://www.linkedin.com/in/roxanne-bras-petraeus-2292b8109",
+    li: "https://www.linkedin.com/in/roxanne-bras-petraeus-2292b8109/",
     bio: `Roxanne Bras Petraeus is Co-Founder and CEO of Ethena, a modern compliance training company with 150+ customizable course modules trusted by Pinterest, Zendesk, Notion, Figma, and more. 93% approval rating from 3.5M+ learners. U.S. Army combat veteran (Afghanistan), Harvard ROTC graduate, former McKinsey consultant, Oxford Rhodes Scholar.`,
   },
   "Mary Shirley": {
@@ -65,27 +65,27 @@ export const SPEAKERS = {
   },
   "Kara Benedict": {
     co: "Consultant", role: "Compliance Executive", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/kara-benedict-mha-bsn-rn-chc-6861a85a/",
     bio: `Kara Benedict began her career as a registered nurse and quickly learned that most compliance failures happen when operational realities clash and culture and communication break down. Over the past twenty years, she has built a career at the intersection of healthcare operations, risk management, compliance, and internal audit, helping leaders navigate complexity, manage risk practically, and build cultures where accountability and integrity are more than corporate buzzwords.`,
   },
   "Jessica Beane": {
     co: "Databricks", role: "Program Manager, Legal Compliance & Ethics", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/jessicabeane/",
     bio: `Jessica Beane is a Program Manager for Legal Compliance and Ethics at Databricks, bringing over 15 years of experience across global retail and innovative technology sectors. At Databricks she leads initiatives to leverage AI for compliance support and embeds ethical standards into daily workflows. Before Databricks, she spent more than a decade driving the Compliance & Ethics program at a global retail giant. Prior to going in-house, she was an attorney at Orrick, Herrington & Sutcliffe in Silicon Valley specializing in complex employment litigation.`,
   },
   "Mor Wetzler": {
     co: "Databricks", role: "Head of Legal Compliance and Ethics", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/morwetzler/",
     bio: `Mor Wetzler is the Head of Legal Compliance and Ethics at Databricks, leading global compliance strategy, ethical governance initiatives, and internal investigations. Before Databricks, she spent 8 years at Amazon in various roles including leading the Business Conduct & Ethics program for AWS and the third-party anti-corruption program across all Amazon businesses. Prior to Amazon, she spent a decade in private practice at Paul Hastings LLP in New York City, leading white collar investigations.`,
   },
   "Debbie Trokus": {
     co: "Troklus Compliance Consulting", role: "President", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/debbie-troklus-5b376764/",
     bio: `Debbie Trokus advises clients on compliance program implementation, effectiveness reviews, risk assessment, audit, education, investigations, and IRO services. Over 25 years in the compliance industry; former AVP for Compliance at the University of Louisville and Manager at PricewaterhouseCoopers. Current President of the Compliance Certification Board; past President of HCCA/SCCE board. Dean for HCCA and SCCE Compliance Academies. Co-author of HCCA Compliance 101, SCCE Compliance 101, and SCCE Compliance 101 International.`,
   },
   "Sheryl Vacca": {
     co: "Vacca Consulting", role: "President", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/sheryl-vacca-6a28b97/",
     bio: `Sheryl Vacca is President of Vacca Consulting, focused on risk, compliance, audit and integrity. Former Chief Risk Officer at Providence St Joseph Health, Chief Compliance and Audit Officer at University of California, and Director and National Lead of Healthcare Internal Audit at Deloitte. 30+ years of compliance, risk, and auditing experience. Co-author of multiple editions of Compliance 101 for domestic and international audiences. Awarded Senior Vice President Emerita by the University of California. Past President of SCCE/HCCA.`,
   },
   "Dustin Eaton": {
@@ -95,32 +95,32 @@ export const SPEAKERS = {
   },
   "Mitchell Boyd": {
     co: "Harley-Davidson Motor Company", role: "Legal Compliance Manager", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/mitchell-boyd-569bb2125/",
     bio: "",
   },
   "Megan Zwiebel": {
     co: "Anti-Corruption Report", role: "Editor, Consultant + Coach", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/megan-zwiebel-b55092b5/",
     bio: `Megan Zwiebel is a compliance consultant and coach who integrates mindfulness practices with deep legal expertise to help companies and compliance professionals live and work with integrity. She serves as Editor of the Anti-Corruption Report. With nearly 20 years in the field, she specializes in anti-bribery and corruption laws with additional expertise in antitrust, data privacy, cybersecurity, sanctions, export control, supply chain risk, and internal investigations.`,
   },
   "Nicole Di Schino": {
     co: "Spark Compliance Consulting", role: "Principal Consultant & Exec Creative Director", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/nicole-di-schino-a822126/",
     bio: `Nicole Di Schino is a principal consultant at Spark Compliance, a Diligent Brand, specializing in compliance program training and communications creation and optimization, as well as program reviews and risk assessments. She is the principal author of content for the innovation-award-winning Compliance Competitor business simulation game. Former Editor-in-Chief of the Anti-Corruption Report. Prior legal career at Quinn Emanuel (white collar/FCPA) and Manatt, Phelps & Phillips in New York City.`,
   },
   "Tobias Sturesson": {
     co: "Heart Management", role: "Co-Founder / Author", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/tobiassturesson/",
     bio: `Tobias Sturesson is co-founder of Heart Management and author of the international bestseller You Can Culture: Transformative Leadership Habits for a Thriving Workplace, Positive Impact, and Lasting Success. Having grown up in a religious cult and confronting its toxic culture, he became a passionate advocate for cultural health in achieving business success and ethical impact. Heart Management helps organizations in high-stakes industries uncover root causes undermining cultural health and build leadership habits that strengthen trust and reduce risk.`,
   },
   "Courtney Sander": {
     co: "Ford the River Compliance", role: "Principal Compliance Advisor", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/casander/",
     bio: `Courtney Sander is a compliance and operations strategist who works at the intersection of ethics, compliance, product, and change. She partners with organizations from small high-risk teams to Fortune 10 companies to untangle complex problems, align teams, and turn big ideas into systems that actually work. She holds an MA in Applied and Professional Ethics and is a Certified Compliance & Ethics Professional (CCEP).`,
   },
   "Harper Wells": {
     co: "Learning Pool", role: "Chief Compliance Officer", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/harper-wells-ccep/",
     bio: `Harper Wells has 20+ years of experience helping organizations build compliance programs that actually work — inspiring trust, driving ethical behavior, and aligning with business goals. As Chief Compliance Officer at Learning Pool, she built and leads the company's first enterprise-wide ethics & compliance program. She combines data, behavioral science, and practical solutions, and is a speaker, writer, and thought leader in the compliance space.`,
   },
   "Mikhail Belov": {
@@ -135,47 +135,47 @@ export const SPEAKERS = {
   },
   "Stefany Samp": {
     co: "Crowe LLP", role: "ERM Senior Manager", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/stefanysamp/",
     bio: `Stefany Samp works in Enterprise Risk Management at Crowe, partnering with Compliance, Legal, Internal Audit, and business leaders to design risk assessment approaches and ERM frameworks. She primarily supports life sciences, technology, media, and consumer products sectors. Co-authored "From Guidance to Action: Exploring Practical Enterprise Risk Management" with COSO. Prior to Crowe, she worked at Koch Industries in commercial compliance and internal audit.`,
   },
   "Barbara Petitti": {
     co: "Ericsson", role: "Compliance Counsel", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/barbarapetitti/",
     bio: `Barbara Petitti is an accomplished legal and compliance professional with more than 25 years of experience working in large global organizations. She has held senior roles in Investigations, Mergers & Acquisition, Training, Communications and Culture. She joined Ericsson as Compliance Counsel in May 2025 after working twelve years at a French transportation company.`,
   },
   "Ellen Hunt": {
     co: "Cushman & Wakefield", role: "Vice President, Global Ethics & Compliance Program", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/ellenmhunt/",
     bio: `Ellen Hunt is a lawyer, ethics & compliance professional, audit executive, and chief privacy officer serving as VP, Global Ethics & Compliance Program at Cushman & Wakefield (52,000 employees in 60 countries). Former VP, Compliance Program Operations and Chief Privacy Officer for LifePoint Health, and SVP Audit, Ethics & Compliance Officer for AARP. Named 2019 Compliance Officer of the Year; Trust Across America 2019 Lifetime Achievement Honoree; 2021 Mentor of the Year; Compliance Week Lifetime Achievement Award 2025. Co-founder of The Seven Elements Book Club.`,
   },
   "Teri Quimby": {
     co: "Quimby Consulting Group, LLC", role: "President", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/teriquimby/",
     bio: `Teri Quimby, J.D., LL.M., NACD.DC, is a seasoned governance expert with over 20 years of distinguished board service, guiding boards and the C-Suite through governance and compliance. Former state regulator appointed by governors and elected by voters. Contributing author to SCCE's The Complete Manual on Compliance & Ethics and NACD publications. Columnist for Compliance & Ethics Professional magazine (SCCE). LL.M. in Corporate Law from Widener University School of Law.`,
   },
   "William Cameron": {
     co: "Exelon Nuclear", role: "Assistant General Counsel; Sr. Manager, Ethics", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/william-w-cameron/",
     bio: "",
   },
   "Kristine Coy-Foster": {
     co: "Gap, Inc.", role: "Director, Global Integrity & Compliance", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/kristinecoyfoster/",
     bio: "",
   },
   "Adam Balfour": {
     co: "Bridgestone", role: "VP and General Counsel for Compliance & Privacy", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/adam-balfour-013a103/",
     bio: `Adam Balfour is on a mission to help make ethics and compliance more relatable and relevant. Originally from Scotland, he works for Bridgestone as Vice President and General Counsel for Corporate Compliance and Data Privacy. Regular speaker at SCCE, Compliance Week, Ethisphere, and PLI. Co-editor of the Compliance and Ethics: Ideas & Answers newsletter. Author of Ethics & Compliance For Humans (CCI Press, September 2023). CCEP certified.`,
   },
   "Jannica Houben": {
     co: "TD SYNNEX", role: "Vice President, Global Legal Transformation", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/jannicahouben/",
     bio: `Jannica Houben is VP, Global Legal Transformation at TD SYNNEX (Fortune 500, world's largest technology distributor). Previously Director, Ethics & Compliance for Europe at Tech Data. Former attorney at Clifford Chance in Amsterdam focusing on competition law and corporate compliance. Based in Barcelona, Spain. Masters in European & International Law from Tilburg University. CCEP-I. Fluent in Dutch, English, German, and proficient in Spanish.`,
   },
   "Tanja Gromadzki": {
     co: "TD SYNNEX", role: "Sr. Director, Ethics & Compliance – Americas", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/tanja-gromadzki-hobby/",
     bio: `Tanja Gromadzki-Hobby is Senior Director, Ethics & Compliance Officer for the Americas at TD SYNNEX (Fortune 500). She leads the regional Ethics and Compliance Program and serves as a strategic partner to the business. Previously Corporate Compliance Manager at Chewy, Inc. JD from Stetson University College of Law; MBA from University of South Florida St. Petersburg; BBA from University of Miami. CCEP.`,
   },
   "J. Veronica Xu": {
@@ -185,12 +185,12 @@ export const SPEAKERS = {
   },
   "Robin Rohmer": {
     co: "Ethically Aligned LLC", role: "CEO", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/robin-rohmer-02b38147/",
     bio: `Robin Rohmer, CMA, CSCA, is CEO of Ethically Aligned LLC, which collaborates with organizations to develop retaliation prevention and monitoring strategies. She has over 25 years in internal audit, corporate operations, and ethics and compliance. Previously Executive Director, Ethics and Regulatory Compliance at KPMG, where she developed a best-in-class retaliation monitoring program from the ground up. Faculty member with Becker Professional Education and the HR Education Network.`,
   },
   "Wendy Evans": {
     co: "Lockheed Martin", role: "Senior Manager, Corporate Ethics", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/wendy-evans-26504189/",
     bio: `Wendy Evans is a Senior Manager with Lockheed Martin's Ethics and Enterprise Assurance organization, supporting Corporate Ethics Programs including ethics officer training, entity level control audits, and resource development. She began her career in law enforcement as a police officer in Louisville, Kentucky, then joined the FBI, assigned to the Tampa Division. Joined Lockheed Martin in 2006. CFE, CCEP, Regent Emeritus of the ACFE Board of Regents. Adjunct Professor at Everglades University.`,
   },
   "Devon Jackson": {
@@ -205,7 +205,7 @@ export const SPEAKERS = {
   },
   "Colin Flood": {
     co: "Ankura Consulting Group, LLC", role: "Senior Managing Director", v: true,
-    li: "",
+    li: "https://www.linkedin.com/in/colinfloodcpa/",
     bio: `Colin Flood is a Senior Managing Director at Ankura with two decades of forensic accounting investigation and corporate compliance experience. He has investigated business conduct in 45+ countries and presented findings to the DOJ and SEC. He also assists clients with ethics and compliance program design, forensic data analytics, and anti-corruption monitoring. Guest lecturer at the University of Notre Dame on international corruption and third-party risks.`,
   },
   "Joseph Pugh": {
@@ -248,7 +248,7 @@ export const SPEAKERS = {
     li: "",
     bio: `Majid Charania is Director of Compliance at the Competition Bureau of Canada, promoting compliance with Canadian competition laws. He lectured competition law at Toronto Metropolitan University, served as special advisor to the Commissioner of Competition, and completed a mission at the European Commission's Directorate-General for Competition in Brussels. JD from the University of Ottawa; BBA from the Schulich School of Business at York University. CCEP-I.`,
   },
-  "Shalini Rajoo": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
+  "Shalini Rajoo": { co: "TBD", role: "TBD", v: false, li: "https://www.linkedin.com/in/shalinirajoo/", bio: "" },
   "Caterina Bulgarella": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
   "Marnae Collins": { co: "TBD", role: "TBD", v: false, li: "", bio: "" },
   "Patricia Marinho": {

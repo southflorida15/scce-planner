@@ -305,10 +305,15 @@ export default function SpeakersTab() {
               <button style={s.cardName} onClick={() => setBioOpen(sp.name)}>
                 {sp.name}
               </button>
-              {sp.v
-                ? <span style={s.verifiedDot} title="Verified">✅</span>
-                : <span style={s.unverifiedDot} title="Pending verification">⚠</span>
-              }
+              <span style={{
+                background: sp.v ? "#dcfce7" : "#fef9c3",
+                color: sp.v ? "#166534" : "#854d0e",
+                border: sp.v ? "1px solid #bbf7d0" : "1px solid #fde68a",
+                fontSize: "10px", fontWeight: "700", padding: "2px 8px",
+                borderRadius: "10px", whiteSpace: "nowrap",
+              }}>
+                {sp.v ? "Verified" : "Pending"}
+              </span>
             </div>
 
             {/* Role */}
@@ -335,12 +340,16 @@ export default function SpeakersTab() {
             </div>
 
             {/* LinkedIn */}
-            {sp.li && (
-              <a href={sp.li} target="_blank" rel="noopener noreferrer" style={s.liLink}>
-                <span style={s.liIconSmall}><LinkedInIcon size={10} /></span>
-                LinkedIn
-              </a>
-            )}
+            <a
+              href={sp.li || `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(sp.name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ ...s.liLink, opacity: sp.li ? 1 : 0.5 }}
+              title={sp.li ? "View LinkedIn profile" : "Search on LinkedIn (URL not yet confirmed)"}
+            >
+              <span style={s.liIconSmall}><LinkedInIcon size={10} /></span>
+              {sp.li ? "LinkedIn" : "Search LinkedIn ↗"}
+            </a>
           </div>
         ))}
       </div>
@@ -372,12 +381,16 @@ export default function SpeakersTab() {
                   <span style={s.modalChip}>🎤 Sessions: {sessions.join(", ")}</span>
                 )}
               </div>
-              {sp.li && (
-                <a href={sp.li} target="_blank" rel="noopener noreferrer" style={{ ...s.liLink, marginBottom: "14px", display: "inline-flex" }}>
-                  <span style={s.liIconSmall}><LinkedInIcon size={10} /></span>
-                  View LinkedIn Profile
-                </a>
-              )}
+              <a
+                href={sp.li || `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(bioOpen)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ ...s.liLink, marginBottom: "14px", display: "inline-flex", opacity: sp.li ? 1 : 0.55 }}
+                title={sp.li ? "View LinkedIn profile" : "Search on LinkedIn (URL not yet confirmed)"}
+              >
+                <span style={s.liIconSmall}><LinkedInIcon size={10} /></span>
+                {sp.li ? "View LinkedIn Profile" : "Search on LinkedIn ↗"}
+              </a>
               <p style={s.modalBio}>
                 {sp.bio || "Biographical profile not yet available."}
               </p>
